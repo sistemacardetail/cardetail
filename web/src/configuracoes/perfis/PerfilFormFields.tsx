@@ -5,21 +5,33 @@ import {
     AccordionSummary,
     Alert,
     Box,
+    Button,
     Card,
     Checkbox,
     Chip,
     CircularProgress,
+    Divider,
     FormControlLabel,
     FormGroup,
     Grid,
+    InputAdornment,
     TextField,
+    Tooltip,
     Typography,
 } from '@mui/material';
-import { AdminPanelSettings, ExpandMore as ExpandMoreIcon, LockPerson } from '@mui/icons-material';
+import {
+    AdminPanelSettings,
+    ClearAll,
+    DoneAll,
+    ExpandMore as ExpandMoreIcon,
+    LockPerson,
+    Search,
+} from '@mui/icons-material';
 import { PerfilCreateDTO, PerfilService, PermissaoDTO } from '../usuarios';
 import Stack from '@mui/material/Stack';
 import { CustomSwitch } from '../../components/CustomSwitch';
 import { alpha } from '@mui/material/styles';
+import { unaccent } from '../../utils/string.utils';
 
 export interface PerfilFormValues {
     nome: string;
@@ -90,6 +102,8 @@ export default function PerfilFormFields({
     const [loading, setLoading] = React.useState(true);
     const [loadError, setLoadError] = React.useState<string | null>(null);
     const [expandedModulos, setExpandedModulos] = React.useState<string[]>([]);
+    const [searchTerm, setSearchTerm] = React.useState('');
+    const [showSelectedOnly, setShowSelectedOnly] = React.useState(false);
     const isAdministrador = isPerfilPadrao && values.nome === 'ADMINISTRADOR';
 
     React.useEffect(() => {
@@ -115,11 +129,10 @@ export default function PerfilFormFields({
         onFieldChange('permissoesIds', newPermissoes);
     };
 
-    const handleModuloToggle = (modulo: string) => {
-        const permissoesDoModulo = permissoesAgrupadas[modulo] || [];
-        const idsDoModulo = permissoesDoModulo.map((p) => p.id);
-        const selecionadas = values.permissoesIds?.filter((id) => idsDoModulo.includes(id)) || [];
-        const todasSelecionadas = selecionadas.length === idsDoModulo.length;
+    const handleModuloToggleFiltered = (permissoes: PermissaoDTO[]) => {
+        const idsDoModulo = permissoes.map((p) => p.id);
+        const selecionadas = (values.permissoesIds ?? []).filter((id) => idsDoModulo.includes(id));
+        const todasSelecionadas = idsDoModulo.length > 0 && selecionadas.length === idsDoModulo.length;
 
         let novasPermissoes: number[];
         if (todasSelecionadas) {
@@ -137,9 +150,9 @@ export default function PerfilFormFields({
         );
     };
 
-    const getModuloStatus = (modulo: string) => {
-        const idsDoModulo = (permissoesAgrupadas[modulo] || []).map(p => p.id);
-        const selecionadas = (values.permissoesIds ?? []).filter(id => idsDoModulo.includes(id)).length;
+    const getModuloStatusFiltered = (permissoes: PermissaoDTO[]) => {
+        const idsDoModulo = permissoes.map((p) => p.id);
+        const selecionadas = (values.permissoesIds ?? []).filter((id) => idsDoModulo.includes(id)).length;
 
         if (selecionadas === 0) return 'none';
         if (selecionadas === idsDoModulo.length) return 'all';
@@ -160,6 +173,66 @@ export default function PerfilFormFields({
         };
 
         return acaoLabels[acao] || acao;
+    };
+
+    const selectedIdsSet = React.useMemo(() => new Set(values.permissoesIds ?? []), [values.permissoesIds]);
+
+    const moduloEntriesFiltradas = React.useMemo(() => {
+        const query = unaccent(searchTerm.trim().toLowerCase());
+        const hasQuery = query.length > 0;
+
+        return Object.entries(permissoesAgrupadas)
+            .map(([modulo, permissoes]) => {
+                const moduloLabel = MODULO_LABELS[modulo] || modulo;
+                const permissoesFiltradas = permissoes.filter((permissao) => {
+                    if (showSelectedOnly && !selectedIdsSet.has(permissao.id)) return false;
+                    if (!hasQuery) return true;
+
+                    const target = [
+                        moduloLabel,
+                        permissao.codigo,
+                        permissao.descricao || '',
+                        formatPermissaoLabel(permissao.codigo),
+                    ]
+                        .join(' ')
+                        .toLowerCase();
+
+                    return unaccent(target).includes(query);
+                });
+
+                return [modulo, permissoesFiltradas] as const;
+            })
+            .filter(([, permissoes]) => permissoes.length > 0)
+            .sort(([moduloA], [moduloB]) => {
+                const labelA = MODULO_LABELS[moduloA] || moduloA;
+                const labelB = MODULO_LABELS[moduloB] || moduloB;
+                return labelA.localeCompare(labelB);
+            });
+    }, [permissoesAgrupadas, searchTerm, showSelectedOnly, selectedIdsSet]);
+
+    const totalPermissoes = React.useMemo(
+        () => Object.values(permissoesAgrupadas).reduce((acc, permissoes) => acc + permissoes.length, 0),
+        [permissoesAgrupadas]
+    );
+
+    const filteredPermissionIds = React.useMemo(
+        () => moduloEntriesFiltradas.flatMap(([, permissoes]) => permissoes.map((p) => p.id)),
+        [moduloEntriesFiltradas]
+    );
+
+    const allFilteredSelected =
+        filteredPermissionIds.length > 0 && filteredPermissionIds.every((id) => selectedIdsSet.has(id));
+
+    const handleSelectFiltered = () => {
+        if (filteredPermissionIds.length === 0) return;
+        const novasPermissoes = Array.from(new Set([...(values.permissoesIds ?? []), ...filteredPermissionIds]));
+        onFieldChange('permissoesIds', novasPermissoes);
+    };
+
+    const handleClearFiltered = () => {
+        const filteredSet = new Set(filteredPermissionIds);
+        const novasPermissoes = (values.permissoesIds ?? []).filter((id) => !filteredSet.has(id));
+        onFieldChange('permissoesIds', novasPermissoes);
     };
 
     return (
@@ -255,7 +328,7 @@ export default function PerfilFormFields({
                     action={
                     <>
                         <Chip
-                            label={`${values.permissoesIds?.length ?? 0} selecionadas`}
+                            label={`${values.permissoesIds?.length ?? 0} de ${totalPermissoes} selecionadas`}
                             size="small"
                             color="primary"
                             variant="outlined"
@@ -271,9 +344,73 @@ export default function PerfilFormFields({
                     ) : loadError ? (
                         <Alert severity="error">{loadError}</Alert>
                     ) : (
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                            {Object.entries(permissoesAgrupadas).map(([modulo, permissoes]) => {
-                                const status = getModuloStatus(modulo);
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, p: 2 }}>
+                            <Stack spacing={1.5}>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    placeholder="Filtrar por módulo, ação ou descrição da permissão"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    slotProps={{
+                                        input: {
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    <Search fontSize="small" />
+                                                </InputAdornment>
+                                            ),
+                                        },
+                                    }}
+                                />
+
+                                <Stack direction={{ xs: 'column', md: 'row' }} spacing={1} justifyContent="space-between">
+                                    <FormControlLabel
+                                        control={
+                                            <CustomSwitch
+                                                checked={showSelectedOnly}
+                                                onChange={(e) => setShowSelectedOnly(e.target.checked)}
+                                            />
+                                        }
+                                        label="Mostrar somente selecionadas"
+                                    />
+
+                                    <Stack direction="row" spacing={1} flexWrap="wrap">
+                                        <Tooltip title="Seleciona todas as permissões exibidas no filtro atual">
+                                            <span>
+                                                <Button
+                                                    size="small"
+                                                    variant="outlined"
+                                                    startIcon={<DoneAll />}
+                                                    onClick={handleSelectFiltered}
+                                                    disabled={isAdministrador || filteredPermissionIds.length === 0 || allFilteredSelected}
+                                                >
+                                                    Selecionar
+                                                </Button>
+                                            </span>
+                                        </Tooltip>
+                                        <Tooltip title="Remove apenas as permissões exibidas no filtro atual">
+                                            <span>
+                                                <Button
+                                                    size="small"
+                                                    variant="outlined"
+                                                    startIcon={<ClearAll />}
+                                                    onClick={handleClearFiltered}
+                                                    disabled={isAdministrador || filteredPermissionIds.length === 0}
+                                                >
+                                                    Limpar
+                                                </Button>
+                                            </span>
+                                        </Tooltip>
+                                    </Stack>
+                                </Stack>
+                            </Stack>
+
+                            <Divider sx={{ my: 1 }} />
+
+                            {moduloEntriesFiltradas.length === 0 ? (
+                                <Alert severity="info">Nenhuma permissão encontrada para os filtros aplicados.</Alert>
+                            ) : moduloEntriesFiltradas.map(([modulo, permissoes]) => {
+                                const status = getModuloStatusFiltered(permissoes);
                                 const isExpanded = expandedModulos.includes(modulo);
 
                                 return (
@@ -303,7 +440,7 @@ export default function PerfilFormFields({
                                                     indeterminate={status === 'partial'}
                                                     onChange={(e) => {
                                                         e.stopPropagation();
-                                                        handleModuloToggle(modulo);
+                                                        handleModuloToggleFiltered(permissoes);
                                                     }}
                                                     disabled={isAdministrador}
                                                     onClick={(e) => e.stopPropagation()}
@@ -352,6 +489,12 @@ export default function PerfilFormFields({
                                     </Accordion>
                                 );
                             })}
+
+                            {!!errors.permissoes && (
+                                <Alert severity="error" sx={{ mt: 1 }}>
+                                    {errors.permissoes}
+                                </Alert>
+                            )}
                         </Box>
                     )}
             </Card>

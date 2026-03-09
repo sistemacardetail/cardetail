@@ -16,6 +16,7 @@ export default function QuickActions({ onNewAgendamento }: QuickActionsProps) {
     const canCreateAgendamento = checkPermission(PERMISSOES.AGENDAMENTOS_CRIAR, hasPermissao);
     const canCreateCliente = checkPermission(PERMISSOES.CLIENTES_CRIAR, hasPermissao);
     const canCreateOrcamento = checkPermission(PERMISSOES.ORCAMENTOS_CRIAR, hasPermissao);
+    const canViewPagamentos = checkPermission(PERMISSOES.AGENDAMENTOS_PAGAMENTOS_VISUALIZAR, hasPermissao);
 
     const actions = [
         {
@@ -47,7 +48,8 @@ export default function QuickActions({ onNewAgendamento }: QuickActionsProps) {
             description: 'Acessar dados de faturamento',
             icon: <Assessment sx={{ fontSize: 32 }} />,
             color: '#9c27b0',
-            onClick: () => navigate('/app'),
+            onClick: () => navigate('/app/consultas/faturamento'),
+            disabled: !canViewPagamentos,
         },
     ];
 

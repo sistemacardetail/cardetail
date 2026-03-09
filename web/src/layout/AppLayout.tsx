@@ -21,6 +21,7 @@ import {
     ExpandLess,
     ExpandMore,
     Group,
+    Insights,
     LocalOffer,
     Logout,
     Menu as MenuIcon,
@@ -106,6 +107,28 @@ const menuItems: MenuItem[] = [
         path: '/app/pacotes',
         description: 'Pacotes de serviços',
         permissao: PERMISSOES.PACOTES_VISUALIZAR,
+    },
+    {
+        text: 'Consultas',
+        icon: <Insights />,
+        path: '/app/consultas',
+        description: 'Consultas estratégicas',
+        children: [
+            {
+                text: 'Clientes',
+                icon: <People fontSize="small" />,
+                path: '/app/consultas/clientes',
+                description: 'Consulta por perfil de retorno',
+                permissao: PERMISSOES.CLIENTES_VISUALIZAR,
+            },
+            {
+                text: 'Pagamentos',
+                icon: <CalendarMonth fontSize="small" />,
+                path: '/app/consultas/agendamentos',
+                description: 'Consulta financeira de agendamentos',
+                permissao: PERMISSOES.AGENDAMENTOS_PAGAMENTOS_VISUALIZAR,
+            },
+        ],
     },
     {
         text: 'Produtos',
