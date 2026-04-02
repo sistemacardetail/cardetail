@@ -10,17 +10,20 @@ import {
     IconButton,
     Stack,
     TextField,
+    Tooltip,
     Typography,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import AddIcon from '@mui/icons-material/Add';
 import { useNotifications } from '../../hooks/useNotifications';
 import { createModeloVeiculoWithResponse } from './ModeloVeiculoService';
 import { MarcaVeiculoDTO, searchMarcas } from '../marca-veiculo/MarcaVeiculoService';
 import { searchTipos, TipoVeiculoDTO } from '../tipo-veiculo/TipoVeiculoService';
 import { extractFieldErrors, formatApiErrors } from '../../services/apiService';
 import { unaccent } from '../../utils/string.utils';
+import MarcaVeiculoModal from '../marca-veiculo/MarcaVeiculoModal';
 
 interface ModeloVeiculoModalProps {
     open: boolean;
@@ -35,6 +38,7 @@ export default function ModeloVeiculoModal({ open, onClose, onSuccess }: ModeloV
     const [marca, setMarca] = useState<MarcaVeiculoDTO | null>(null);
     const [tipo, setTipo] = useState<TipoVeiculoDTO | null>(null);
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [marcaModalOpen, setMarcaModalOpen] = useState(false);
 
     const [marcas, setMarcas] = useState<MarcaVeiculoDTO[]>([]);
     const [loadingMarcas, setLoadingMarcas] = useState(false);
@@ -109,8 +113,25 @@ export default function ModeloVeiculoModal({ open, onClose, onSuccess }: ModeloV
             setMarca(null);
             setTipo(null);
             setErrors({});
+            setMarcaModalOpen(false);
+            return;
         }
+
+        setMarcaModalOpen(false);
     }, [open, loadMarcas, loadTipos]);
+
+    const handleMarcaCreated = React.useCallback((novaMarca: MarcaVeiculoDTO) => {
+        marcasVeiculosCache.current.marcas = [
+            novaMarca,
+            ...marcasVeiculosCache.current.marcas.filter((marcaItem) => marcaItem.id !== novaMarca.id),
+        ];
+        setMarcas((prev) => [
+            novaMarca,
+            ...prev.filter((marcaItem) => marcaItem.id !== novaMarca.id),
+        ]);
+        setMarca(novaMarca);
+        setErrors((prev) => (prev.marca ? { ...prev, marca: '' } : prev));
+    }, []);
 
     const validate = (): boolean => {
         const newErrors: Record<string, string> = {};
@@ -173,6 +194,7 @@ export default function ModeloVeiculoModal({ open, onClose, onSuccess }: ModeloV
     };
 
     return (
+        <>
         <Dialog
             open={open}
             onClose={(_event, reason) => {
@@ -247,38 +269,67 @@ export default function ModeloVeiculoModal({ open, onClose, onSuccess }: ModeloV
             {/* Content */}
             <DialogContent sx={{ px: 3, py: 3 }}>
                 <Stack spacing={2.5}>
-                    <Autocomplete
-                        fullWidth
-                        size="small"
-                        options={marcas}
-                        getOptionLabel={(option) => option.nome}
-                        isOptionEqualToValue={(option, value) => option.id === value.id}
-                        loading={loadingMarcas}
-                        value={marca}
-                        onChange={(_, newValue) => {
-                            setMarca(newValue);
-                            if (newValue && errors.marca) {
-                                setErrors((prev) => ({ ...prev, marca: '' }));
-                            }
-                        }}
-                        onInputChange={(_, newValue, reason) => {
-                            if (reason === 'input' && newValue.length >= 2) {
-                                loadMarcas(newValue);
-                            }
-                        }}
-                        onOpen={() => {loadMarcas('')}}
-                        noOptionsText="Nenhuma marca encontrada"
-                        loadingText="Carregando..."
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                label="Marca"
-                                required
-                                error={!!errors.marca}
-                                helperText={errors.marca}
-                            />
+                    <Box sx={{ display: 'flex', gap: 0.5 }}>
+                        <Autocomplete
+                            fullWidth
+                            size="small"
+                            options={marcas}
+                            getOptionLabel={(option) => option.nome}
+                            isOptionEqualToValue={(option, value) => option.id === value.id}
+                            loading={loadingMarcas}
+                            value={marca}
+                            onChange={(_, newValue) => {
+                                setMarca(newValue);
+                                if (newValue && errors.marca) {
+                                    setErrors((prev) => ({ ...prev, marca: '' }));
+                                }
+                            }}
+                            onInputChange={(_, newValue, reason) => {
+                                if (reason === 'input' && newValue.length >= 2) {
+                                    loadMarcas(newValue);
+                                }
+                            }}
+                            onOpen={() => {loadMarcas('')}}
+                            noOptionsText="Nenhuma marca encontrada"
+                            loadingText="Carregando..."
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Marca"
+                                    required
+                                    error={!!errors.marca}
+                                    helperText={errors.marca}
+                                />
+                            )}
+                        />
+                        {!marca && (
+                            <Tooltip title="Adicionar nova marca" arrow>
+                                <IconButton
+                                    size="small"
+                                    onClick={() => setMarcaModalOpen(true)}
+                                    sx={{
+                                        height: 40,
+                                        width: 40,
+                                        flexShrink: 0,
+                                        borderRadius: 1.5,
+                                        bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
+                                        color: 'primary.main',
+                                        border: 1,
+                                        borderColor: (theme) => alpha(theme.palette.primary.main, 0.3),
+                                        transition: 'all 0.2s ease',
+                                        '&:hover': {
+                                            bgcolor: 'primary.main',
+                                            color: 'white',
+                                            borderColor: 'primary.main',
+                                            transform: 'scale(1.05)',
+                                        },
+                                    }}
+                                >
+                                    <AddIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
                         )}
-                    />
+                    </Box>
 
                     <TextField
                         fullWidth
@@ -377,5 +428,11 @@ export default function ModeloVeiculoModal({ open, onClose, onSuccess }: ModeloV
                 </Button>
             </DialogActions>
         </Dialog>
+        <MarcaVeiculoModal
+            open={marcaModalOpen}
+            onClose={() => setMarcaModalOpen(false)}
+            onSuccess={handleMarcaCreated}
+        />
+        </>
     );
 }
