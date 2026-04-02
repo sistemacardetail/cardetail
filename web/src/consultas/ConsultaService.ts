@@ -16,6 +16,10 @@ export interface ConsultaFinanceiroItem {
     id: string;
     numero: number;
     clienteNome: string;
+    veiculoMarca?: string;
+    veiculoModelo?: string;
+    veiculoPlaca?: string | null;
+    veiculoSemPlaca?: boolean;
     dataPrevisaoInicio?: string;
     statusPagamento: StatusPagamento;
     valorTotal: number;
@@ -39,6 +43,29 @@ export interface ConsultaClienteItem {
     diasDesdeUltimaVisita: number | null;
     mediaDiasEntreVisitas: number | null;
     frequenciaMensal: number;
+}
+
+export interface ConsultaVeiculoItem {
+    veiculoId: string;
+    placa: string;
+    modelo: string;
+    marca: string;
+    cor: string;
+    clienteId: string;
+    clienteNome: string;
+    clienteTelefone?: string;
+    totalAgendamentos: number;
+    ultimoAgendamento?: string;
+    diasDesdeUltimaVisita: number | null;
+    mediaDiasEntreVisitas: number | null;
+    frequenciaMensal: number;
+}
+
+export interface ConsultaVeiculoFilters {
+    dataInicio?: string;
+    dataFim?: string;
+    busca?: string;
+    incluirCancelados?: boolean;
 }
 
 const buildSearchQuery = (filters: ConsultaFilters): string => {
@@ -130,11 +157,16 @@ export const consultarFaturamento = async (
 
     const itensFinanceiros = await runWithConcurrency(agendamentos, async (agendamento) => {
         const { data: resumo } = await getResumoFinanceiro(agendamento.id);
+        const veiculo = agendamento.veiculo;
 
         return {
             id: agendamento.id,
             numero: agendamento.numero,
             clienteNome: agendamento.clienteNome || '-',
+            veiculoMarca: veiculo?.modelo?.marca?.nome || '',
+            veiculoModelo: veiculo?.modelo?.nome || '',
+            veiculoPlaca: veiculo?.placa ?? '',
+            veiculoSemPlaca: veiculo?.semPlaca ?? false,
             dataPrevisaoInicio: agendamento.dataPrevisaoInicio,
             statusPagamento: resumo?.statusPagamento || agendamento.statusPagamento || 'PENDENTE',
             valorTotal: resumo?.valorTotal ?? agendamento.valorFinal ?? 0,
@@ -247,6 +279,105 @@ export const consultarClientes = async (
     });
 
     resultado.sort((a, b) => b.totalAgendamentos - a.totalAgendamentos);
+
+    return { data: resultado };
+};
+
+const buildVeiculoSearchQuery = (filters: ConsultaVeiculoFilters): string => {
+    const clauses: string[] = [];
+
+    if (filters.dataInicio) {
+        clauses.push(`dataPrevisaoInicio=ge='${filters.dataInicio}T00:00:00'`);
+    }
+
+    if (filters.dataFim) {
+        clauses.push(`dataPrevisaoInicio=le='${filters.dataFim}T23:59:59'`);
+    }
+
+    if (filters.busca?.trim()) {
+        const escaped = filters.busca.trim().replace(/'/g, "''");
+        const searchTerm = `*${escaped}*`;
+        clauses.push(`(veiculo.cliente.nome==${searchTerm},veiculo.placa==${searchTerm},veiculo.modelo.nome==${searchTerm})`);
+    }
+
+    if (!filters.incluirCancelados) {
+        clauses.push('status!=CANCELADO');
+    }
+
+    return clauses.join(';');
+};
+
+export const consultarVeiculos = async (
+    filters: ConsultaVeiculoFilters
+): Promise<{ data?: ConsultaVeiculoItem[]; error?: string }> => {
+    const search = buildVeiculoSearchQuery(filters);
+    let page = 0;
+    let totalPages = 1;
+    const agendamentos: AgendamentoListDTO[] = [];
+
+    while (page < totalPages && page < MAX_PAGES) {
+        const response = await searchAgendamentos({
+            page,
+            size: DEFAULT_PAGE_SIZE,
+            search,
+            sort: [{ field: 'numero', sort: 'desc' }],
+        });
+
+        if (!response.data) {
+            break;
+        }
+
+        agendamentos.push(...response.data.content);
+        totalPages = response.data.page.totalPages;
+        page += 1;
+    }
+
+    const porVeiculo = new Map<string, AgendamentoListDTO[]>();
+
+    agendamentos.forEach((agendamento) => {
+        const veiculoId = agendamento.veiculo?.id || 'sem-veiculo';
+        const current = porVeiculo.get(veiculoId) || [];
+        current.push(agendamento);
+        porVeiculo.set(veiculoId, current);
+    });
+
+    const resultado: ConsultaVeiculoItem[] = Array.from(porVeiculo.entries()).map(([veiculoId, itens]) => {
+        const primeiroItem = itens[0];
+        const veiculo = primeiroItem.veiculo;
+
+        const datas = itens
+            .map((item) => item.dataPrevisaoInicio)
+            .filter((data): data is string => Boolean(data));
+
+        const ultimoAgendamento = datas.length > 0
+            ? datas.reduce((latest, current) => (dayjs(current).isAfter(dayjs(latest)) ? current : latest))
+            : undefined;
+
+        const diasDesdeUltimaVisita = ultimoAgendamento
+            ? dayjs().startOf('day').diff(dayjs(ultimoAgendamento).startOf('day'), 'day')
+            : null;
+
+        const mediaDiasEntreVisitas = calculateAverageDays(datas);
+        const frequenciaMensal = calculateMonthlyFrequency(datas);
+
+        return {
+            veiculoId,
+            placa: veiculo?.placa || 'Sem placa',
+            modelo: veiculo?.modelo?.nome || '-',
+            marca: veiculo?.modelo?.marca?.nome || '-',
+            cor: veiculo?.cor?.nome || '-',
+            clienteId: '',
+            clienteNome: primeiroItem.clienteNome || 'Cliente não identificado',
+            clienteTelefone: undefined,
+            totalAgendamentos: itens.length,
+            ultimoAgendamento,
+            diasDesdeUltimaVisita,
+            mediaDiasEntreVisitas,
+            frequenciaMensal,
+        };
+    });
+
+    resultado.sort((a, b) => (b.diasDesdeUltimaVisita ?? 0) - (a.diasDesdeUltimaVisita ?? 0));
 
     return { data: resultado };
 };

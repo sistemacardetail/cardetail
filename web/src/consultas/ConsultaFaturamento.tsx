@@ -1,28 +1,16 @@
 import React from 'react';
 import dayjs from 'dayjs';
-import {
-    Assessment,
-    CalendarMonth,
-    MonetizationOn,
-    Payments,
-    QueryStats,
-    ReceiptLong,
-    TrendingUp,
-} from '@mui/icons-material';
+import { MonetizationOn, Payments, ReceiptLong, } from '@mui/icons-material';
 import {
     Alert,
+    alpha,
     Box,
-    Button,
     Card,
     CardContent,
     Chip,
     CircularProgress,
-    FormControl,
     Grid,
-    InputLabel,
     LinearProgress,
-    MenuItem,
-    Select,
     Stack,
     Table,
     TableBody,
@@ -30,14 +18,13 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    TextField,
     Typography,
-    alpha,
 } from '@mui/material';
 import PageContainer from '../components/PageContainer';
 import { useNotifications } from '../hooks/useNotifications';
 import { formatCurrency, formatDate, getStatusPagamentoLabel } from '../utils';
 import { ConsultaFinanceiroItem, consultarFaturamento } from './ConsultaService';
+import ConsultaFilters, { DatePreset, StatusSelect } from './ConsultaFilters';
 
 interface FiltrosFaturamento {
     dataInicio: string;
@@ -45,7 +32,43 @@ interface FiltrosFaturamento {
     statusPagamento: 'TODOS' | 'PAGO' | 'PARCIAL' | 'PENDENTE';
 }
 
-const STATUS_OPTIONS: Array<FiltrosFaturamento['statusPagamento']> = ['TODOS', 'PAGO', 'PARCIAL', 'PENDENTE'];
+const STATUS_OPTIONS: Array<{ value: FiltrosFaturamento['statusPagamento']; label: string }> = [
+    { value: 'TODOS', label: 'Todos' },
+    { value: 'PAGO', label: 'Pago' },
+    { value: 'PARCIAL', label: 'Parcial' },
+    { value: 'PENDENTE', label: 'Pendente' },
+];
+
+const datePresets: DatePreset[] = [
+    {
+        label: 'Mês atual',
+        getRange: () => ({
+            dataInicio: dayjs().startOf('month').format('YYYY-MM-DD'),
+            dataFim: dayjs().endOf('month').format('YYYY-MM-DD'),
+        }),
+    },
+    {
+        label: '30 dias',
+        getRange: () => ({
+            dataInicio: dayjs().subtract(30, 'day').format('YYYY-MM-DD'),
+            dataFim: dayjs().format('YYYY-MM-DD'),
+        }),
+    },
+    {
+        label: '90 dias',
+        getRange: () => ({
+            dataInicio: dayjs().subtract(90, 'day').format('YYYY-MM-DD'),
+            dataFim: dayjs().format('YYYY-MM-DD'),
+        }),
+    },
+    {
+        label: 'Ano atual',
+        getRange: () => ({
+            dataInicio: dayjs().startOf('year').format('YYYY-MM-DD'),
+            dataFim: dayjs().format('YYYY-MM-DD'),
+        }),
+    },
+];
 
 const getStatusColor = (status: ConsultaFinanceiroItem['statusPagamento']) => {
     if (status === 'PAGO') return 'success';
@@ -53,12 +76,13 @@ const getStatusColor = (status: ConsultaFinanceiroItem['statusPagamento']) => {
     return 'warning';
 };
 
-const periodPresets = [
-    { label: 'Mês atual', days: 0, useMonth: true },
-    { label: '30 dias', days: 30, useMonth: false },
-    { label: '90 dias', days: 90, useMonth: false },
-    { label: 'Ano atual', days: 0, useMonth: false, useYear: true },
-] as const;
+const getVeiculoLabel = (item: ConsultaFinanceiroItem) => {
+    const modeloPartes = [item.veiculoMarca, item.veiculoModelo].filter(Boolean);
+    const modelo = modeloPartes.join(' ');
+    const placa = item.veiculoSemPlaca ? 'Sem placa' : item.veiculoPlaca || '';
+    const detalhes = [modelo, placa].filter(Boolean);
+    return detalhes.length > 0 ? detalhes.join(' • ') : '-';
+};
 
 export default function ConsultaFaturamento() {
     const notifications = useNotifications();
@@ -77,7 +101,6 @@ export default function ConsultaFaturamento() {
         valorTotal: 0,
         faturamentoAnual: 0,
     });
-    const [serieMensal, setSerieMensal] = React.useState<Array<{ mes: string; recebido: number; pendente: number; total: number }>>([]);
 
     const carregarDados = React.useCallback(async () => {
         setLoading(true);
@@ -104,7 +127,6 @@ export default function ConsultaFaturamento() {
             valorTotal: data?.valorTotal || 0,
             faturamentoAnual: data?.faturamentoAnual || 0,
         });
-        setSerieMensal(data?.serieMensal || []);
         setLoading(false);
     }, [filtros, notifications]);
 
@@ -113,271 +135,254 @@ export default function ConsultaFaturamento() {
     }, [carregarDados]);
 
     const percentualRecebido = resumo.valorTotal > 0 ? (resumo.valorRecebido / resumo.valorTotal) * 100 : 0;
-    const maiorValorMensal = Math.max(...serieMensal.map((item) => item.total), 1);
-
-    const handlePreset = (preset: (typeof periodPresets)[number]) => {
-        if (preset.useMonth) {
-            setFiltros((prev) => ({
-                ...prev,
-                dataInicio: dayjs().startOf('month').format('YYYY-MM-DD'),
-                dataFim: dayjs().endOf('month').format('YYYY-MM-DD'),
-            }));
-            return;
-        }
-
-        if (preset.useYear) {
-            setFiltros((prev) => ({
-                ...prev,
-                dataInicio: dayjs().startOf('year').format('YYYY-MM-DD'),
-                dataFim: dayjs().endOf('year').format('YYYY-MM-DD'),
-            }));
-            return;
-        }
-
-        setFiltros((prev) => ({
-            ...prev,
-            dataInicio: dayjs().subtract(preset.days, 'day').format('YYYY-MM-DD'),
-            dataFim: dayjs().format('YYYY-MM-DD'),
-        }));
-    };
 
     return (
         <PageContainer
             title="Faturamento"
             description="Painel financeiro com indicadores, visão mensal e lançamentos por período."
-            icon={<Assessment />}
+            icon={<ReceiptLong />}
         >
-            <Card
-                variant="outlined"
-                sx={{
-                    mb: 2,
-                    borderRadius: 3,
-                    background: (theme) => `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)}, ${alpha(theme.palette.success.main, 0.08)})`,
-                }}
+            <ConsultaFilters
+                dataInicio={filtros.dataInicio}
+                dataFim={filtros.dataFim}
+                onDataInicioChange={(value) => setFiltros((prev) => ({ ...prev, dataInicio: value }))}
+                onDataFimChange={(value) => setFiltros((prev) => ({ ...prev, dataFim: value }))}
+                onSearch={carregarDados}
+                isLoading={loading}
+                datePresets={datePresets}
             >
-                <CardContent>
-                    <Grid container spacing={2}>
-                        <Grid size={{ xs: 12, md: 3 }}>
-                            <TextField
-                                fullWidth
-                                label="Data inicial"
-                                type="date"
-                                value={filtros.dataInicio}
-                                onChange={(event) => setFiltros((prev) => ({ ...prev, dataInicio: event.target.value }))}
-                                slotProps={{ inputLabel: { shrink: true } }}
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, md: 3 }}>
-                            <TextField
-                                fullWidth
-                                label="Data final"
-                                type="date"
-                                value={filtros.dataFim}
-                                onChange={(event) => setFiltros((prev) => ({ ...prev, dataFim: event.target.value }))}
-                                slotProps={{ inputLabel: { shrink: true } }}
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, md: 3 }}>
-                            <FormControl fullWidth>
-                                <InputLabel>Status pagamento</InputLabel>
-                                <Select
-                                    label="Status pagamento"
-                                    value={filtros.statusPagamento}
-                                    onChange={(event) => setFiltros((prev) => ({
-                                        ...prev,
-                                        statusPagamento: event.target.value as FiltrosFaturamento['statusPagamento'],
-                                    }))}
-                                >
-                                    {STATUS_OPTIONS.map((status) => (
-                                        <MenuItem key={status} value={status}>
-                                            {status === 'TODOS' ? 'Todos' : getStatusPagamentoLabel(status)}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid size={{ xs: 12, md: 3 }} sx={{ display: 'flex', alignItems: 'center' }}>
-                            <Button onClick={carregarDados} variant="contained" fullWidth disabled={loading}>
-                                Atualizar painel
-                            </Button>
-                        </Grid>
-                        <Grid size={{ xs: 12 }}>
-                            <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: 'wrap' }}>
-                                {periodPresets.map((preset) => (
-                                    <Chip
-                                        key={preset.label}
-                                        icon={<CalendarMonth fontSize="small" />}
-                                        label={preset.label}
-                                        onClick={() => handlePreset(preset)}
-                                        variant="outlined"
-                                        clickable
-                                    />
-                                ))}
-                            </Stack>
-                        </Grid>
-                    </Grid>
-                </CardContent>
-            </Card>
+                <StatusSelect
+                    value={filtros.statusPagamento}
+                    onChange={(value) => setFiltros((prev) => ({ ...prev, statusPagamento: value }))}
+                    options={STATUS_OPTIONS}
+                    label="Status pagamento"
+                />
+            </ConsultaFilters>
 
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
-            <Grid container spacing={2} sx={{ mb: 2 }}>
-                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-                    <Card variant="outlined" sx={{ borderRadius: 3, height: '100%' }}>
-                        <CardContent>
-                            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-                                <Typography color="text.secondary" variant="body2">Recebido</Typography>
-                                <Payments color="success" fontSize="small" />
+            <Grid container spacing={2} sx={{ mb: 3 }}>
+                <Grid size={{ xs: 6, sm: 6, lg: 4 }}>
+                    <Card
+                        variant="outlined"
+                        sx={{
+                            borderRadius: 3,
+                            border: 1,
+                            borderColor: 'divider',
+                            height: '100%',
+                            transition: 'all 0.2s ease',
+                            '&:hover': { borderColor: 'success.main' },
+                        }}
+                    >
+                        <CardContent sx={{ py: 2 }}>
+                            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.5 }}>
+                                <Typography variant="caption" color="text.secondary" fontWeight={500}>
+                                    Recebido
+                                </Typography>
+                                <Payments color="success" sx={{ fontSize: 18 }} />
                             </Stack>
-                            <Typography variant="h5" sx={{ fontWeight: 700 }}>{formatCurrency(resumo.valorRecebido)}</Typography>
+                            <Typography variant="h6" fontWeight={700}>{formatCurrency(resumo.valorRecebido)}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-                    <Card variant="outlined" sx={{ borderRadius: 3, height: '100%' }}>
-                        <CardContent>
-                            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-                                <Typography color="text.secondary" variant="body2">Pendente</Typography>
-                                <ReceiptLong color="warning" fontSize="small" />
+                <Grid size={{ xs: 6, sm: 6, lg: 4 }}>
+                    <Card
+                        variant="outlined"
+                        sx={{
+                            borderRadius: 3,
+                            border: 1,
+                            borderColor: 'divider',
+                            height: '100%',
+                            transition: 'all 0.2s ease',
+                            '&:hover': { borderColor: 'warning.main' },
+                        }}
+                    >
+                        <CardContent sx={{ py: 2 }}>
+                            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.5 }}>
+                                <Typography variant="caption" color="text.secondary" fontWeight={500}>
+                                    Pendente
+                                </Typography>
+                                <ReceiptLong color="warning" sx={{ fontSize: 18 }} />
                             </Stack>
-                            <Typography variant="h5" sx={{ fontWeight: 700 }}>{formatCurrency(resumo.valorPendente)}</Typography>
+                            <Typography variant="h6" fontWeight={700}>{formatCurrency(resumo.valorPendente)}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-                    <Card variant="outlined" sx={{ borderRadius: 3, height: '100%' }}>
-                        <CardContent>
-                            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-                                <Typography color="text.secondary" variant="body2">Total no período</Typography>
-                                <MonetizationOn color="primary" fontSize="small" />
+                <Grid size={{ xs: 6, sm: 6, lg: 4 }}>
+                    <Card
+                        variant="outlined"
+                        sx={{
+                            borderRadius: 3,
+                            border: 1,
+                            borderColor: 'divider',
+                            height: '100%',
+                            transition: 'all 0.2s ease',
+                            '&:hover': { borderColor: 'primary.main' },
+                        }}
+                    >
+                        <CardContent sx={{ py: 2 }}>
+                            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.5 }}>
+                                <Typography variant="caption" color="text.secondary" fontWeight={500}>
+                                    Total no período
+                                </Typography>
+                                <MonetizationOn color="primary" sx={{ fontSize: 18 }} />
                             </Stack>
-                            <Typography variant="h5" sx={{ fontWeight: 700 }}>{formatCurrency(resumo.valorTotal)}</Typography>
+                            <Typography variant="h6" fontWeight={700}>{formatCurrency(resumo.valorTotal)}</Typography>
                             <Box sx={{ mt: 1 }}>
                                 <Typography variant="caption" color="text.secondary">
-                                    {percentualRecebido.toFixed(1)}% já recebido
+                                    {percentualRecebido.toFixed(1)}% recebido
                                 </Typography>
-                                <LinearProgress variant="determinate" value={percentualRecebido} sx={{ mt: 0.75, height: 7, borderRadius: 8 }} />
+                                <LinearProgress
+                                    variant="determinate"
+                                    value={percentualRecebido}
+                                    sx={{ mt: 0.5, height: 6, borderRadius: 3 }}
+                                />
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-                    <Card variant="outlined" sx={{ borderRadius: 3, height: '100%' }}>
-                        <CardContent>
-                            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-                                <Typography color="text.secondary" variant="body2">Faturamento anual</Typography>
-                                <TrendingUp color="info" fontSize="small" />
-                            </Stack>
-                            <Typography variant="h5" sx={{ fontWeight: 700 }}>{formatCurrency(resumo.faturamentoAnual)}</Typography>
-                            <Typography variant="caption" color="text.secondary">Valores recebidos no ano corrente</Typography>
                         </CardContent>
                     </Card>
                 </Grid>
             </Grid>
 
             <Grid container spacing={2}>
-                <Grid size={{ xs: 12, lg: 5 }}>
-                    <Card variant="outlined" sx={{ borderRadius: 3, height: '100%' }}>
-                        <CardContent>
-                            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                                <QueryStats color="primary" />
-                                <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                                    Desempenho mensal
-                                </Typography>
+                <Grid size={{ xs: 12, lg: 12 }}>
+                    <Card
+                        variant="outlined"
+                        sx={{
+                            borderRadius: 3,
+                            border: 1,
+                            borderColor: 'divider',
+                            height: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            overflow: 'hidden',
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                px: 2.5,
+                                py: 2,
+                                borderBottom: 1,
+                                borderColor: 'divider',
+                                bgcolor: (theme) => alpha(theme.palette.background.default, 0.5),
+                            }}
+                        >
+                            <Stack direction="row" alignItems="center" justifyContent="space-between">
+                                <Stack direction="row" alignItems="center" spacing={1.5}>
+                                    <Typography variant="subtitle1" fontWeight={600}>
+                                        Lançamentos financeiros
+                                    </Typography>
+                                </Stack>
+                                <Chip
+                                    label={`${itens.length} registros`}
+                                    size="small"
+                                    variant="outlined"
+                                    sx={{ borderRadius: 2, fontWeight: 500 }}
+                                />
                             </Stack>
-                            {serieMensal.length === 0 && (
-                                <Typography variant="body2" color="text.secondary">
-                                    Sem dados financeiros para o período selecionado.
-                                </Typography>
-                            )}
-                            <Stack spacing={1.5}>
-                                {serieMensal.map((item) => {
-                                    const ratio = (item.total / maiorValorMensal) * 100;
-                                    const recebidoRatio = item.total > 0 ? (item.recebido / item.total) * 100 : 0;
+                        </Box>
 
-                                    return (
-                                        <Box key={item.mes}>
-                                            <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>
-                                                <Typography variant="caption" color="text.secondary">
-                                                    {dayjs(item.mes).format('MM/YYYY')}
-                                                </Typography>
-                                                <Typography variant="caption" sx={{ fontWeight: 700 }}>
-                                                    {formatCurrency(item.total)}
-                                                </Typography>
-                                            </Stack>
-                                            <Box sx={{ width: `${Math.max(ratio, 8)}%`, bgcolor: 'grey.200', borderRadius: 2, height: 10, overflow: 'hidden' }}>
-                                                <Box sx={{ width: `${recebidoRatio}%`, bgcolor: 'success.main', height: '100%' }} />
-                                            </Box>
-                                        </Box>
-                                    );
-                                })}
-                            </Stack>
-                        </CardContent>
-                    </Card>
-                </Grid>
-
-                <Grid size={{ xs: 12, lg: 7 }}>
-                    <Card variant="outlined" sx={{ borderRadius: 3, height: '100%' }}>
-                        <CardContent sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1.5 }}>
-                                <ReceiptLong color="primary" />
-                                <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                                    Lançamentos financeiros
-                                </Typography>
-                                <Chip label={`${itens.length} registros`} size="small" variant="outlined" sx={{ ml: 'auto' }} />
-                            </Stack>
-
-                            {loading ? (
-                                <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <CircularProgress size={30} />
-                                </Box>
-                            ) : (
-                                <TableContainer sx={{ maxHeight: 460, border: 1, borderColor: 'divider', borderRadius: 2 }}>
-                                    <Table stickyHeader size="small">
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>Número</TableCell>
-                                                <TableCell>Cliente</TableCell>
-                                                <TableCell>Data</TableCell>
-                                                <TableCell>Status</TableCell>
-                                                <TableCell align="right">Recebido</TableCell>
-                                                <TableCell align="right">Pendente</TableCell>
-                                                <TableCell align="right">Total</TableCell>
+                        {loading ? (
+                            <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', py: 8 }}>
+                                <CircularProgress size={32} />
+                            </Box>
+                        ) : (
+                            <TableContainer sx={{ maxHeight: 400, flex: 1 }}>
+                                <Table stickyHeader size="small">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell align="center" sx={{ fontWeight: 600, color: 'text.secondary', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                                                Nº Agendamento
+                                            </TableCell>
+                                            <TableCell sx={{ fontWeight: 600, color: 'text.secondary', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                                                Cliente / Veículo
+                                            </TableCell>
+                                            <TableCell align="center" sx={{ fontWeight: 600, color: 'text.secondary', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                                                Data
+                                            </TableCell>
+                                            <TableCell align="center" sx={{ fontWeight: 600, color: 'text.secondary', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                                                Status
+                                            </TableCell>
+                                            <TableCell align="center" sx={{ fontWeight: 600, color: 'text.secondary', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                                                Recebido
+                                            </TableCell>
+                                            <TableCell align="center" sx={{ fontWeight: 600, color: 'text.secondary', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                                                Pendente
+                                            </TableCell>
+                                            <TableCell align="center" sx={{ fontWeight: 600, color: 'text.secondary', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                                                Total
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {itens.map((item) => (
+                                            <TableRow
+                                                key={item.id}
+                                                hover
+                                                sx={{
+                                                    '&:hover': {
+                                                        bgcolor: (theme) => alpha(theme.palette.primary.main, 0.02),
+                                                    },
+                                                }}
+                                            >
+                                                <TableCell align="center">
+                                                    <Typography variant="body2" fontWeight={600}>
+                                                        #{item.numero}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Stack spacing={0.25}>
+                                                        <Typography variant="body2" fontWeight={600}>
+                                                            {item.clienteNome}
+                                                        </Typography>
+                                                        <Typography variant="caption">
+                                                            {getVeiculoLabel(item)}
+                                                        </Typography>
+                                                    </Stack>
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    <Typography variant="body2">{formatDate(item.dataPrevisaoInicio)}</Typography>
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    <Chip
+                                                        size="small"
+                                                        label={getStatusPagamentoLabel(item.statusPagamento)}
+                                                        color={getStatusColor(item.statusPagamento)}
+                                                        variant="outlined"
+                                                        sx={{ borderRadius: 2, fontWeight: 500 }}
+                                                    />
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                                                        {formatCurrency(item.valorRecebido)}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                                                        {formatCurrency(item.valorPendente)}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    <Typography variant="body2" fontWeight={700} sx={{ fontFamily: 'monospace' }}>
+                                                        {formatCurrency(item.valorTotal)}
+                                                    </Typography>
+                                                </TableCell>
                                             </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {itens.map((item) => (
-                                                <TableRow key={item.id} hover>
-                                                    <TableCell sx={{ fontWeight: 600 }}>#{item.numero}</TableCell>
-                                                    <TableCell>{item.clienteNome}</TableCell>
-                                                    <TableCell>{formatDate(item.dataPrevisaoInicio)}</TableCell>
-                                                    <TableCell>
-                                                        <Chip
-                                                            size="small"
-                                                            label={getStatusPagamentoLabel(item.statusPagamento)}
-                                                            color={getStatusColor(item.statusPagamento)}
-                                                            variant="outlined"
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell align="right" sx={{ fontFamily: 'monospace' }}>{formatCurrency(item.valorRecebido)}</TableCell>
-                                                    <TableCell align="right" sx={{ fontFamily: 'monospace' }}>{formatCurrency(item.valorPendente)}</TableCell>
-                                                    <TableCell align="right" sx={{ fontWeight: 700, fontFamily: 'monospace' }}>{formatCurrency(item.valorTotal)}</TableCell>
-                                                </TableRow>
-                                            ))}
-                                            {itens.length === 0 && (
-                                                <TableRow>
-                                                    <TableCell colSpan={7}>
-                                                        <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 3 }}>
+                                        ))}
+                                        {itens.length === 0 && (
+                                            <TableRow>
+                                                <TableCell colSpan={7}>
+                                                    <Box sx={{ py: 6, textAlign: 'center' }}>
+                                                        <Typography variant="body2" color="text.secondary">
                                                             Nenhum lançamento encontrado para os filtros aplicados.
                                                         </Typography>
-                                                    </TableCell>
-                                                </TableRow>
-                                            )}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                            )}
-                        </CardContent>
+                                                    </Box>
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        )}
                     </Card>
                 </Grid>
             </Grid>

@@ -1,25 +1,13 @@
 import React from 'react';
 import dayjs from 'dayjs';
-import {
-    AccessTime,
-    FilterAlt,
-    Groups,
-    PersonSearch,
-    Repeat,
-    Today,
-} from '@mui/icons-material';
+import { DirectionsCar, Repeat, Search, } from '@mui/icons-material';
 import {
     Alert,
+    alpha,
     Box,
-    Button,
     Card,
-    CardContent,
-    Checkbox,
     Chip,
     CircularProgress,
-    FormControlLabel,
-    Grid,
-    LinearProgress,
     Stack,
     Table,
     TableBody,
@@ -29,25 +17,55 @@ import {
     TableRow,
     TextField,
     Typography,
-    alpha,
 } from '@mui/material';
 import PageContainer from '../components/PageContainer';
 import { formatDate } from '../utils';
 import { useNotifications } from '../hooks/useNotifications';
-import { ConsultaClienteItem, consultarClientes } from './ConsultaService';
+import { consultarVeiculos, ConsultaVeiculoItem } from './ConsultaService';
+import ConsultaFilters, { DatePreset } from './ConsultaFilters';
 
-interface FiltrosClientes {
+interface FiltrosVeiculos {
     dataInicio: string;
     dataFim: string;
-    clienteNome: string;
+    busca: string;
     incluirCancelados: boolean;
 }
 
-const formatFrequencia = (item: ConsultaClienteItem): string => {
-    if (item.mediaDiasEntreVisitas === null) {
-        return 'Sem histórico suficiente';
-    }
+const datePresets: DatePreset[] = [
+    {
+        label: 'Último mês',
+        getRange: () => ({
+            dataInicio: dayjs().subtract(1, 'month').format('YYYY-MM-DD'),
+            dataFim: dayjs().format('YYYY-MM-DD'),
+        }),
+    },
+    {
+        label: '3 meses',
+        getRange: () => ({
+            dataInicio: dayjs().subtract(3, 'month').format('YYYY-MM-DD'),
+            dataFim: dayjs().format('YYYY-MM-DD'),
+        }),
+    },
+    {
+        label: '6 meses',
+        getRange: () => ({
+            dataInicio: dayjs().subtract(6, 'month').format('YYYY-MM-DD'),
+            dataFim: dayjs().format('YYYY-MM-DD'),
+        }),
+    },
+    {
+        label: '12 meses',
+        getRange: () => ({
+            dataInicio: dayjs().subtract(12, 'month').format('YYYY-MM-DD'),
+            dataFim: dayjs().format('YYYY-MM-DD'),
+        }),
+    },
+];
 
+const formatFrequencia = (item: ConsultaVeiculoItem): string => {
+    if (item.mediaDiasEntreVisitas === null) {
+        return '-';
+    }
     return `${item.mediaDiasEntreVisitas} dias`;
 };
 
@@ -55,22 +73,22 @@ export default function ConsultaClientes() {
     const notifications = useNotifications();
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState<string | null>(null);
-    const [filtros, setFiltros] = React.useState<FiltrosClientes>({
-        dataInicio: dayjs().subtract(12, 'month').startOf('month').format('YYYY-MM-DD'),
+    const [filtros, setFiltros] = React.useState<FiltrosVeiculos>({
+        dataInicio: dayjs().subtract(12, 'month').format('YYYY-MM-DD'),
         dataFim: dayjs().format('YYYY-MM-DD'),
-        clienteNome: '',
+        busca: '',
         incluirCancelados: false,
     });
-    const [itens, setItens] = React.useState<ConsultaClienteItem[]>([]);
+    const [itens, setItens] = React.useState<ConsultaVeiculoItem[]>([]);
 
     const carregarDados = React.useCallback(async () => {
         setLoading(true);
         setError(null);
 
-        const { data, error: requestError } = await consultarClientes({
+        const { data, error: requestError } = await consultarVeiculos({
             dataInicio: filtros.dataInicio,
             dataFim: filtros.dataFim,
-            clienteNome: filtros.clienteNome,
+            busca: filtros.busca,
             incluirCancelados: filtros.incluirCancelados,
         });
 
@@ -89,187 +107,165 @@ export default function ConsultaClientes() {
         carregarDados();
     }, [carregarDados]);
 
-    const totalClientes = itens.length;
-    const mediaDias = itens.length > 0
-        ? itens
-            .filter((item) => item.mediaDiasEntreVisitas !== null)
-            .reduce((acc, item) => acc + (item.mediaDiasEntreVisitas || 0), 0)
-            / Math.max(1, itens.filter((item) => item.mediaDiasEntreVisitas !== null).length)
-        : 0;
-    const clientesSemRetorno = itens.filter((item) => (item.diasDesdeUltimaVisita || 0) >= 30).length;
-    const maxAgendamentos = Math.max(...itens.map((item) => item.totalAgendamentos), 1);
-
     return (
         <PageContainer
             title="Consulta de Clientes"
-            description="Análise de retenção, recência de visita e frequência de agendamentos."
-            icon={<Groups />}
+            description="Análise de frequência de visitas e histórico de agendamentos."
+            icon={<DirectionsCar />}
         >
-            <Card
-                variant="outlined"
-                sx={{
-                    mb: 2,
-                    borderRadius: 3,
-                    background: (theme) => `linear-gradient(140deg, ${alpha(theme.palette.info.main, 0.08)}, ${alpha(theme.palette.primary.main, 0.08)})`,
-                }}
+            <ConsultaFilters
+                dataInicio={filtros.dataInicio}
+                dataFim={filtros.dataFim}
+                onDataInicioChange={(value) => setFiltros((prev) => ({ ...prev, dataInicio: value }))}
+                onDataFimChange={(value) => setFiltros((prev) => ({ ...prev, dataFim: value }))}
+                onSearch={carregarDados}
+                isLoading={loading}
+                datePresets={datePresets}
             >
-                <CardContent>
-                    <Grid container spacing={2}>
-                        <Grid size={{ xs: 12, md: 3 }}>
-                            <TextField
-                                fullWidth
-                                label="Data inicial"
-                                type="date"
-                                value={filtros.dataInicio}
-                                onChange={(event) => setFiltros((prev) => ({ ...prev, dataInicio: event.target.value }))}
-                                slotProps={{ inputLabel: { shrink: true } }}
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, md: 3 }}>
-                            <TextField
-                                fullWidth
-                                label="Data final"
-                                type="date"
-                                value={filtros.dataFim}
-                                onChange={(event) => setFiltros((prev) => ({ ...prev, dataFim: event.target.value }))}
-                                slotProps={{ inputLabel: { shrink: true } }}
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, md: 4 }}>
-                            <TextField
-                                fullWidth
-                                label="Cliente"
-                                value={filtros.clienteNome}
-                                onChange={(event) => setFiltros((prev) => ({ ...prev, clienteNome: event.target.value }))}
-                                placeholder="Buscar por nome"
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, md: 2 }} sx={{ display: 'flex', alignItems: 'center' }}>
-                            <Button variant="contained" fullWidth onClick={carregarDados} disabled={loading}>
-                                Atualizar
-                            </Button>
-                        </Grid>
-                        <Grid size={{ xs: 12 }}>
-                            <FormControlLabel
-                                control={(
-                                    <Checkbox
-                                        checked={filtros.incluirCancelados}
-                                        onChange={(event) => setFiltros((prev) => ({
-                                            ...prev,
-                                            incluirCancelados: event.target.checked,
-                                        }))}
-                                    />
-                                )}
-                                label="Incluir agendamentos cancelados"
-                            />
-                        </Grid>
-                    </Grid>
-                </CardContent>
-            </Card>
+                <TextField
+                    size="small"
+                    label="Buscar"
+                    placeholder="Cliente, placa ou modelo"
+                    value={filtros.busca}
+                    onChange={(e) => setFiltros((prev) => ({ ...prev, busca: e.target.value }))}
+                    onKeyDown={(e) => e.key === 'Enter' && carregarDados()}
+                    slotProps={{
+                        input: {
+                            startAdornment: <Search sx={{ color: 'text.secondary', mr: 1 }} fontSize="small" />,
+                        },
+                    }}
+                    sx={{ minWidth: 240, flex: 1 }}
+                />
+            </ConsultaFilters>
 
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
-            <Grid container spacing={2} sx={{ mb: 2 }}>
-                <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
-                    <Card variant="outlined" sx={{ borderRadius: 3 }}>
-                        <CardContent>
-                            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-                                <Typography variant="body2" color="text.secondary">Clientes no período</Typography>
-                                <Groups color="primary" fontSize="small" />
-                            </Stack>
-                            <Typography variant="h5" sx={{ fontWeight: 700 }}>{totalClientes}</Typography>
-                        </CardContent>
-                    </Card>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
-                    <Card variant="outlined" sx={{ borderRadius: 3 }}>
-                        <CardContent>
-                            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-                                <Typography variant="body2" color="text.secondary">Média entre visitas</Typography>
-                                <Repeat color="info" fontSize="small" />
-                            </Stack>
-                            <Typography variant="h5" sx={{ fontWeight: 700 }}>{mediaDias.toFixed(1)} dias</Typography>
-                        </CardContent>
-                    </Card>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
-                    <Card variant="outlined" sx={{ borderRadius: 3 }}>
-                        <CardContent>
-                            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-                                <Typography variant="body2" color="text.secondary">Sem retorno (30+ dias)</Typography>
-                                <AccessTime color="warning" fontSize="small" />
-                            </Stack>
-                            <Typography variant="h5" sx={{ fontWeight: 700 }}>{clientesSemRetorno}</Typography>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            </Grid>
-
-            <Card variant="outlined" sx={{ borderRadius: 3 }}>
-                <CardContent>
-                    <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1.5 }}>
-                        <PersonSearch color="primary" />
-                        <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Análise de clientes</Typography>
-                        <Chip icon={<FilterAlt fontSize="small" />} label={`${itens.length} resultados`} size="small" variant="outlined" sx={{ ml: 'auto' }} />
+            <Card
+                variant="outlined"
+                sx={{
+                    borderRadius: 3,
+                    border: 1,
+                    borderColor: 'divider',
+                    overflow: 'hidden',
+                }}
+            >
+                <Box
+                    sx={{
+                        px: 2.5,
+                        py: 2,
+                        borderBottom: 1,
+                        borderColor: 'divider',
+                        bgcolor: (theme) => alpha(theme.palette.background.default, 0.5),
+                    }}
+                >
+                    <Stack direction="row" alignItems="center" justifyContent="space-between">
+                        <Stack direction="row" alignItems="center" spacing={1.5}>
+                            <Typography variant="subtitle1" fontWeight={600}>
+                                Agendamentos por cliente
+                            </Typography>
+                        </Stack>
+                        <Chip
+                            label={`${itens.length} resultados`}
+                            size="small"
+                            variant="outlined"
+                            sx={{ borderRadius: 2, fontWeight: 500 }}
+                        />
                     </Stack>
+                </Box>
 
-                    {loading ? (
-                        <Box sx={{ py: 5, display: 'flex', justifyContent: 'center' }}>
-                            <CircularProgress size={30} />
-                        </Box>
-                    ) : (
-                        <TableContainer sx={{ border: 1, borderColor: 'divider', borderRadius: 2 }}>
-                            <Table size="small">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Cliente</TableCell>
-                                        <TableCell>Último agendamento</TableCell>
-                                        <TableCell>Dias sem visita</TableCell>
-                                        <TableCell align="center">Agendamentos</TableCell>
-                                        <TableCell>Frequência média</TableCell>
-                                        <TableCell>Intensidade</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {itens.map((item) => {
-                                        const progress = (item.totalAgendamentos / maxAgendamentos) * 100;
-                                        const recencia = item.diasDesdeUltimaVisita || 0;
-
-                                        return (
-                                            <TableRow key={item.clienteNome} hover>
-                                                <TableCell sx={{ fontWeight: 600 }}>{item.clienteNome}</TableCell>
-                                                <TableCell>{formatDate(item.ultimoAgendamento)}</TableCell>
-                                                <TableCell>
-                                                    <Chip
-                                                        size="small"
-                                                        label={`${recencia} dias`}
-                                                        color={recencia >= 30 ? 'warning' : 'success'}
-                                                        variant="outlined"
-                                                        icon={<Today fontSize="small" />}
-                                                    />
-                                                </TableCell>
-                                                <TableCell align="center">{item.totalAgendamentos}</TableCell>
-                                                <TableCell>{formatFrequencia(item)} ({item.frequenciaMensal}/mês)</TableCell>
-                                                <TableCell sx={{ minWidth: 150 }}>
-                                                    <LinearProgress variant="determinate" value={progress} sx={{ height: 8, borderRadius: 8 }} />
-                                                </TableCell>
-                                            </TableRow>
-                                        );
-                                    })}
-                                    {itens.length === 0 && (
-                                        <TableRow>
-                                            <TableCell colSpan={6}>
-                                                <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 3 }}>
-                                                    Nenhum cliente encontrado para os filtros informados.
+                {loading ? (
+                    <Box sx={{ py: 8, display: 'flex', justifyContent: 'center' }}>
+                        <CircularProgress size={32} />
+                    </Box>
+                ) : (
+                    <TableContainer sx={{ maxHeight: 540 }}>
+                        <Table size="small" stickyHeader>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell sx={{ fontWeight: 600, color: 'text.secondary', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                                        Cliente / Veículo
+                                    </TableCell>
+                                    <TableCell align="center" sx={{ fontWeight: 600, color: 'text.secondary', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                                        Último agendamento
+                                    </TableCell>
+                                    <TableCell align="center" sx={{ fontWeight: 600, color: 'text.secondary', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                                        Dias sem agendamento
+                                    </TableCell>
+                                    <TableCell align="center" sx={{ fontWeight: 600, color: 'text.secondary', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                                        Agendamentos
+                                    </TableCell>
+                                    <TableCell align="center" sx={{ fontWeight: 600, color: 'text.secondary', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                                        Frequência média
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {itens.map((item) => {
+                                    return (
+                                        <TableRow
+                                            key={item.veiculoId}
+                                            hover
+                                            sx={{
+                                                '&:hover': {
+                                                    bgcolor: (theme) => alpha(theme.palette.primary.main, 0.02),
+                                                },
+                                            }}
+                                        >
+                                            <TableCell>
+                                                <Stack spacing={0.5}>
+                                                    <Stack direction="row" alignItems="center" spacing={1}>
+                                                        <Typography variant="body2" fontWeight={600}>
+                                                            {item.clienteNome}
+                                                        </Typography>
+                                                    </Stack>
+                                                    <Stack direction="row" alignItems="center" spacing={1}>
+                                                        <Typography variant="caption">
+                                                            {item.marca} {item.modelo} {item.cor} • {item.placa}
+                                                        </Typography>
+                                                    </Stack>
+                                                </Stack>
+                                            </TableCell>
+                                        <TableCell align="center">
+                                            <Typography variant="body2">
+                                                {item.ultimoAgendamento ? formatDate(item.ultimoAgendamento) : '-'}
+                                            </Typography>
+                                        </TableCell>
+                                            <TableCell align="center">
+                                                <Typography variant="body2" fontWeight={600}>
+                                                    {item.diasDesdeUltimaVisita}
                                                 </Typography>
                                             </TableCell>
+                                            <TableCell align="center">
+                                                <Typography variant="body2" fontWeight={600}>
+                                                    {item.totalAgendamentos}
+                                                </Typography>
+                                            </TableCell>
+                                        <TableCell align="center">
+                                            <Stack direction="row" alignItems="center" justifyContent="center" spacing={0.5}>
+                                                <Repeat sx={{ fontSize: 14, color: 'text.secondary' }} />
+                                                <Typography variant="body2">
+                                                    {formatFrequencia(item)}
+                                                </Typography>
+                                            </Stack>
+                                        </TableCell>
                                         </TableRow>
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    )}
-                </CardContent>
+                                    );
+                                })}
+                                {itens.length === 0 && (
+                                    <TableRow>
+                                        <TableCell colSpan={5}>
+                                            <Box sx={{ py: 6, textAlign: 'center' }}>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    Nenhum cliente encontrado para os filtros informados.
+                                                </Typography>
+                                            </Box>
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                )}
             </Card>
         </PageContainer>
     );
