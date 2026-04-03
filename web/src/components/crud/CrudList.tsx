@@ -299,20 +299,6 @@ export default function CrudList<T extends { id?: string }>({
         loadData();
     }, [loadData]);
 
-    // Recarrega quando os filtros customizados são aplicados via URL
-    React.useEffect(() => {
-        const urlCustomFilters = searchParams.get('customFilters');
-        if (urlCustomFilters) {
-            try {
-                const parsed = JSON.parse(urlCustomFilters);
-                if (JSON.stringify(parsed) !== JSON.stringify(customFilters)) {
-                    setCustomFilters(parsed);
-                }
-            } catch {
-            }
-        }
-    }, [searchParams, customFilters]);
-
     const handleRowClick = React.useCallback<GridEventListener<'rowClick'>>(
         ({ row }) => {
             if (!canEdit) return;
