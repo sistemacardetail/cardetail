@@ -27,6 +27,7 @@ const LoginForm = () => {
     const { isAuthenticated, refreshAuth } = useAuth();
     const theme = useTheme();
     const primaryColor = theme.palette.primary.main;
+    const backgroundImage = '/src/assets/detail-flow-porshe.png';
 
     useEffect(() => {
         if (isAuthenticated === true) {
@@ -132,10 +133,9 @@ const LoginForm = () => {
                         sx={{
                             position: 'absolute',
                             inset: 0,
-                            background:
-                                `radial-gradient(circle at 20% 20%, ${alpha(primaryColor, 0.35)} 0%, transparent 45%),
-                                 radial-gradient(circle at 80% 80%, ${alpha(primaryColor, 0.25)} 0%, transparent 40%),
-                                 linear-gradient(135deg, #0f172a 0%, #1e293b 45%, #0b1220 100%)`,
+                            backgroundImage: `url(${backgroundImage})`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
                             '&::after': {
                                 content: '""',
                                 position: 'absolute',

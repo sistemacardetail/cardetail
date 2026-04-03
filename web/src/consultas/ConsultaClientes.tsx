@@ -161,7 +161,7 @@ export default function ConsultaClientes() {
                     <Stack direction="row" alignItems="center" justifyContent="space-between">
                         <Stack direction="row" alignItems="center" spacing={1.5}>
                             <Typography variant="subtitle1" fontWeight={600}>
-                                Agendamentos por cliente
+                                Agendamentos por veículo
                             </Typography>
                         </Stack>
                         <Chip

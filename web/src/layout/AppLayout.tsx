@@ -5,6 +5,7 @@ import { useAuth } from '../Main';
 import { PERMISSOES } from '../contexts/AuthContext';
 import { useUnsavedChangesContext } from '../contexts/UnsavedChangesContext';
 import {
+    AccountCircle,
     AddBox,
     AirportShuttle,
     AutoAwesome,
@@ -20,7 +21,6 @@ import {
     DisplaySettings,
     ExpandLess,
     ExpandMore,
-    Group,
     Insights,
     LocalOffer,
     Logout,
@@ -203,7 +203,7 @@ const menuItems: MenuItem[] = [
         children: [
             {
                 text: 'Usuários',
-                icon: <Group />,
+                icon: <AccountCircle />,
                 path: '/app/configuracoes/usuarios',
                 description: 'Gerenciamento de usuários',
                 permissao: PERMISSOES.USUARIOS_VISUALIZAR,

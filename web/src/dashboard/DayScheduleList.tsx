@@ -50,7 +50,7 @@ export default function DayScheduleList({
                                             hideCancelled = false,
                                             onHideCancelledChange,
                                             showHideCancelledControl = false,
-                                        }: DayScheduleListProps) {
+                                        }: Readonly<DayScheduleListProps>) {
     const scrollRef = useRef<HTMLDivElement>(null);
     const currentItemRef = useRef<HTMLLIElement>(null);
     const { hasPermissao } = useAuth();
