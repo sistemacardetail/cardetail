@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="insert-configuracao-cor-primaria" author="elielson.silva">
+        <insert tableName="configuracao_sistema">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="key" value="COR_PRIMARIA"/>
+            <column name="valor" value="#1976d2"/>
+            <column name="descricao" value="Cor primária do sistema"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

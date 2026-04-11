@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="create-table-orcamento" author="elielson.silva">
+        <preConditions onFail="MARK_RAN"
+                       onFailMessage="Tabela orcamento já existe, pulando criação.">
+            <not>
+                <tableExists tableName="orcamento"/>
+            </not>
+        </preConditions>
+
+        <createSequence
+                sequenceName="orcamento_seq"
+                startValue="1"
+                incrementBy="1"/>
+
+        <createTable tableName="orcamento">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="numero" type="BIGINT" defaultValueComputed="nextval('orcamento_seq')">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="id_veiculo" type="UUID">
+                <constraints foreignKeyName="fk_orcamento_veiculo" references="veiculo(id)"/>
+            </column>
+            <column name="id_pacote" type="UUID">
+                <constraints foreignKeyName="fk_orcamento_pacote" references="pacote(id)"/>
+            </column>
+            <column name="valor_pacote" type="NUMBER(18,2)" defaultValueComputed="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="valor_desconto" type="NUMBER(18,2)" defaultValueComputed="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="observacao" type="VARCHAR(3000)"/>
+            <column name="status" type="VARCHAR(20)" defaultValue="ORCADO">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data_criacao" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_status" type="numeric">
+                <constraints foreignKeyName="fk_orcamento_status" references="status_orcamento(id)" nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

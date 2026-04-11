@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="insert-status-pagamento" author="elielson.silva">
+        <preConditions onFail="MARK_RAN" onFailMessage="Já foi inserido status_pagamento, pulando insert padrão.">
+            <sqlCheck expectedResult="f">
+                SELECT COUNT(1) > 0 FROM status_pagamento
+            </sqlCheck>
+        </preConditions>
+
+        <sql>
+            INSERT INTO status_pagamento (id, descricao) VALUES
+              (1, 'Pendente'),
+              (2, 'Parcialmente Pago'),
+              (3, 'Pago');
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

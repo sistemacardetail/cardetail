@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="create-table-agendamento-pagamento" author="elielson.silva">
+        <preConditions onFail="MARK_RAN" onFailMessage="Tabela agendamento_pagamento já existe, pulando criação.">
+            <not>
+                <tableExists tableName="agendamento_pagamento"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="agendamento_pagamento">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="id_agendamento" type="UUID">
+                <constraints nullable="false"
+                             foreignKeyName="fk_agendamento_pagamento_agendamento"
+                             references="agendamento(id)"/>
+            </column>
+            <column name="valor_pago" type="NUMBER(18,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data_recebimento" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_forma_pagamento" type="numeric">
+                <constraints nullable="false"
+                             foreignKeyName="fk_agendamento_pagamento_forma"
+                             references="forma_pagamento(id)"/>
+            </column>
+            <column name="observacao" type="VARCHAR(500)"/>
+            <column name="data_criacao" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="uuid"/>
+        </createTable>
+
+        <createIndex tableName="agendamento_pagamento" indexName="idx_agendamento_pagamento_agendamento">
+            <column name="id_agendamento"/>
+        </createIndex>
+
+        <createIndex tableName="agendamento_pagamento" indexName="idx_agendamento_pagamento_data">
+            <column name="data_recebimento"/>
+        </createIndex>
+
+        <createIndex tableName="agendamento_pagamento" indexName="idx_agendamento_pagamento_forma">
+            <column name="id_forma_pagamento"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

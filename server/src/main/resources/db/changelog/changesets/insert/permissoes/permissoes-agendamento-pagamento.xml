@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="insert-permissoes-agendamento-pagamento" author="elielson.silva">
+        <insert tableName="permissao">
+            <column name="id" value="38"/>
+            <column name="codigo" value="AGENDAMENTOS_PAGAMENTOS_VISUALIZAR"/>
+            <column name="descricao" value="Visualizar pagamentos de agendamentos"/>
+            <column name="modulo" value="FINANCEIRO"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="39"/>
+            <column name="codigo" value="AGENDAMENTOS_PAGAMENTOS_CRIAR"/>
+            <column name="descricao" value="Registrar pagamentos de agendamentos"/>
+            <column name="modulo" value="FINANCEIRO"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="40"/>
+            <column name="codigo" value="AGENDAMENTOS_PAGAMENTOS_EXCLUIR"/>
+            <column name="descricao" value="Excluir pagamentos de agendamentos"/>
+            <column name="modulo" value="FINANCEIRO"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-admin-permissao-agendamento-pagamento" author="elielson.silva">
+        <sql>
+            INSERT INTO perfil_permissao (id_perfil, id_permissao)
+            SELECT 1, id FROM permissao WHERE id IN (38, 39, 40);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

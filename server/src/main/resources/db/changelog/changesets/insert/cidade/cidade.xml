@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="insert-cidades" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="f">
+                SELECT COUNT(1) > 0 FROM cidade
+            </sqlCheck>
+            <sqlCheck expectedResult="t">
+                SELECT COUNT(1) > 0 FROM uf
+            </sqlCheck>
+        </preConditions>
+
+        <createTable tableName="tmp_cidade">
+            <column name="codigo" type="BIGINT"/>
+            <column name="codigo_ibge" type="varchar(20)"/>
+            <column name="nome_maiusculo" type="varchar(100)"/>
+            <column name="nome" type="varchar(100)"/>
+            <column name="sigla_uf" type="varchar(2)"/>
+        </createTable>
+
+        <loadData file="municipios.csv"
+                  tableName="tmp_cidade"
+                  relativeToChangelogFile="true"/>
+
+        <sql>
+            INSERT INTO cidade (nome, codigo_ibge, id_uf)
+            SELECT t.nome,
+                   t.codigo_ibge,
+                   u.id
+            FROM tmp_cidade t
+            JOIN uf u ON u.sigla = t.sigla_uf;
+        </sql>
+
+        <dropTable tableName="tmp_cidade"/>
+    </changeSet>
+
+</databaseChangeLog>

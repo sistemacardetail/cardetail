@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="create-table-status-pagamento" author="elielson.silva">
+        <preConditions onFail="MARK_RAN" onFailMessage="Tabela status_pagamento já existe, pulando criação.">
+            <not>
+                <tableExists tableName="status_pagamento"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="status_pagamento">
+            <column name="id" type="numeric">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="descricao" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <sql>
+            INSERT INTO status_pagamento (id, descricao) VALUES
+              (1, 'Pendente'),
+              (2, 'Parcialmente Pago'),
+              (3, 'Pago');
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

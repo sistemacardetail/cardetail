@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="create-table-empresa" author="elielson.silva">
+        <createTable tableName="empresa">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="nome_fantasia" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="razao_social" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cnpj" type="varchar(14)">
+                <constraints unique="true"/>
+            </column>
+            <column name="id_endereco" type="UUID">
+                <constraints foreignKeyName="fk_empresa_endereco" references="endereco(id)"/>
+            </column>
+            <column name="id_telefone" type="UUID">
+                <constraints foreignKeyName="fk_empresa_telefone" references="telefone(id)"/>
+            </column>
+            <column name="id_logo" type="UUID">
+                <constraints foreignKeyName="fk_empresa_logo" references="logo_empresa(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

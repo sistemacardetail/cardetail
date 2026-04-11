@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="create-table-veiculo" author="elielson.silva">
+        <preConditions onFail="MARK_RAN"
+                       onFailMessage="Tabela veiculo já existe, pulando criação.">
+            <not>
+                <tableExists tableName="veiculo"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="veiculo">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="id_modelo" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_veiculo_modelo" references="modelo_veiculo(id)"/>
+            </column>
+            <column name="id_cor" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_veiculo_cor" references="cor_veiculo(id)"/>
+            </column>
+            <column name="placa" type="VARCHAR(10)">
+                <constraints unique="true"/>
+            </column>
+            <column name="observacao" type="VARCHAR(3000)"/>
+            <column name="data_criacao" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_cliente" type="UUID">
+                <constraints foreignKeyName="fk_veiculo_cliente" references="cliente(id)"/>
+            </column>
+            <column name="ativo" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

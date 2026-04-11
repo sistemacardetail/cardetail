@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="create-table-modelo-veiculo" author="elielson.silva">
+        <preConditions onFail="MARK_RAN"
+                       onFailMessage="Tabela modelo_veiculo já existe, pulando criação.">
+            <not>
+                <tableExists tableName="modelo_veiculo"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="modelo_veiculo">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="nome" type="VARCHAR(100)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="id_marca" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_modelo_marca" references="marca_veiculo(id)"/>
+            </column>
+            <column name="id_tipo" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_modelo_tipo" references="tipo_veiculo(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="add-unique-constraint-modelo-nome" author="elielson.silva">
+        <preConditions onFail="MARK_RAN" onFailMessage="Coluna modelo_veiculo.nome não existe, unique constraint não criada.">
+            <columnExists tableName="modelo_veiculo" columnName="nome"/>
+        </preConditions>
+
+        <addUniqueConstraint tableName="modelo_veiculo" columnNames="nome"/>
+    </changeSet>
+
+</databaseChangeLog>

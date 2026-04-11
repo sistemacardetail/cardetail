@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="insert-status-orcamento" author="elielson.silva">
+        <preConditions onFail="MARK_RAN" onFailMessage="Já foi inserido status_orcamento, pulando insert padrão.">
+            <sqlCheck expectedResult="f">
+                SELECT COUNT(1) > 0 FROM status_orcamento
+            </sqlCheck>
+        </preConditions>
+
+        <sql>
+            INSERT INTO status_orcamento (id, descricao) VALUES
+              (1, 'Pendente'),
+              (2, 'Agendado'),
+              (3, 'Cancelado');
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

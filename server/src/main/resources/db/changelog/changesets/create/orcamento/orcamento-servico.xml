@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="create-table-orcamento-servico" author="elielson.silva">
+        <preConditions onFail="MARK_RAN"
+                       onFailMessage="Tabela orcamento_servico já existe, pulando criação.">
+            <not>
+                <tableExists tableName="orcamento_servico"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="orcamento_servico">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="id_orcamento" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_orcamento_servico_orcamento" references="orcamento(id)"/>
+            </column>
+            <column name="id_servico" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_orcamento_servico_servico" references="servico(id)"/>
+            </column>
+            <column name="valor" type="NUMBER(18,2)" defaultValueComputed="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

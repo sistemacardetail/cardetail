@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="create-table-pacote-servico" author="elielson.silva">
+        <preConditions onFail="MARK_RAN"
+                       onFailMessage="Tabela pacote_servico já existe, pulando criação.">
+            <not>
+                <tableExists tableName="pacote_servico"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="pacote_servico">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="id_pacote" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_pacote_servico_pacote" references="pacote(id)"/>
+            </column>
+            <column name="id_servico" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_pacote_servico_servico" references="servico(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

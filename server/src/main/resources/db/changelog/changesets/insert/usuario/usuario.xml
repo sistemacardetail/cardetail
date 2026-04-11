@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="insert-usuario-admin" author="elielson.silva">
+        <preConditions onFail="MARK_RAN" onFailMessage="Admin já existe.">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(1) FROM usuario WHERE LOWER(login) = 'admin'
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="usuario">
+            <column name="id" value="00000000-0000-0000-0000-000000000001"/>
+            <column name="nome" value="Administrador"/>
+            <column name="login" value="admin"/>
+            <column name="senha" value="$2a$10$Uu5Vb28P3LFLt75IlmF1meru/CLBD504wLQ3AgQq//Z5YI1JL9IEm"/>
+            <column name="id_perfil" value="1"/>
+            <column name="ativo" valueBoolean="true"/>
+            <column name="admin" valueBoolean="true"/>
+            <column name="attempts_login" valueNumeric="0"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

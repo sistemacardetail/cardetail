@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="insert-tipo-veiculo-carro" author="elielson.silva">
+        <preConditions onFail="MARK_RAN" onFailMessage="Tipo veículo 'Carro' já existe.">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO'
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="tipo_veiculo">
+            <column name="descricao" value="Carro"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-tipo-veiculo-caminhonete" author="elielson.silva">
+        <preConditions onFail="MARK_RAN" onFailMessage="Tipo veículo 'Caminhonete' já existe.">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM tipo_veiculo WHERE UPPER(descricao) = 'CAMINHONETE'
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="tipo_veiculo">
+            <column name="descricao" value="Caminhonete"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-tipo-veiculo-suv" author="elielson.silva">
+        <preConditions onFail="MARK_RAN" onFailMessage="Tipo veículo 'SUV' já existe.">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV'
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="tipo_veiculo">
+            <column name="descricao" value="SUV"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-tipo-veiculo-moto" author="elielson.silva">
+        <preConditions onFail="MARK_RAN" onFailMessage="Tipo veículo 'Moto' já existe.">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM tipo_veiculo WHERE UPPER(descricao) = 'MOTO'
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="tipo_veiculo">
+            <column name="descricao" value="Moto"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

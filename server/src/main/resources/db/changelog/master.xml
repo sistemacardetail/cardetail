@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <!-- H2 -->
+    <includeAll path="db/changelog/changesets/h2"/>
+
+    <!-- EXTENSION -->
+    <includeAll path="db/changelog/changesets/extension"/>
+
+    <!-- FUNCTION -->
+    <includeAll path="db/changelog/changesets/function"/>
+
+    <!-- TEMPORARY (REMOVER APÓS DEFINIR ARQUITETURA DE BANCO DE DADOS) -->
+    <include file="db/changelog/changesets/create/schema/system.xml"/>
+
+    <!-- CREATE -->
+    <include file="db/changelog/changesets/create/seguranca/perfil.xml"/>
+    <include file="db/changelog/changesets/create/seguranca/permissao.xml"/>
+    <include file="db/changelog/changesets/create/seguranca/perfil_permissao.xml"/>
+    <include file="db/changelog/changesets/create/seguranca/auditoria_log.xml"/>
+    <include file="db/changelog/changesets/create/cidade/uf.xml"/>
+    <include file="db/changelog/changesets/create/cidade/cidade.xml"/>
+    <include file="db/changelog/changesets/create/endereco/endereco.xml"/>
+    <include file="db/changelog/changesets/create/usuario/usuario.xml"/>
+    <include file="db/changelog/changesets/create/cliente/cliente.xml"/>
+    <include file="db/changelog/changesets/create/veiculo/marca-veiculo.xml"/>
+    <include file="db/changelog/changesets/create/veiculo/tipo-veiculo.xml"/>
+    <include file="db/changelog/changesets/create/veiculo/modelo-veiculo.xml"/>
+    <include file="db/changelog/changesets/create/veiculo/cor-veiculo.xml"/>
+    <include file="db/changelog/changesets/create/veiculo/veiculo.xml"/>
+    <include file="db/changelog/changesets/create/telefone/telefone.xml"/>
+    <include file="db/changelog/changesets/create/produto/unidade-produto.xml"/>
+    <include file="db/changelog/changesets/create/produto-automotivo/tamanho-produto-automotivo.xml"/>
+    <include file="db/changelog/changesets/create/produto-automotivo/tipo-produto-automotivo.xml"/>
+    <include file="db/changelog/changesets/create/produto-automotivo/marca-produto-automotivo.xml"/>
+    <include file="db/changelog/changesets/create/produto-automotivo/produto-automotivo.xml"/>
+    <include file="db/changelog/changesets/create/servico/servico.xml"/>
+    <include file="db/changelog/changesets/create/servico/servico-tipo-veiculo.xml"/>
+    <include file="db/changelog/changesets/create/pacote/pacote.xml"/>
+    <include file="db/changelog/changesets/create/pacote/pacote-servico.xml"/>
+    <include file="db/changelog/changesets/create/orcamento/status-orcamento.xml"/>
+    <include file="db/changelog/changesets/create/orcamento/orcamento.xml"/>
+    <include file="db/changelog/changesets/create/orcamento/orcamento-servico.xml"/>
+    <include file="db/changelog/changesets/create/pagamento/forma-pagamento.xml"/>
+    <include file="db/changelog/changesets/create/pagamento/status-pagamento.xml"/>
+    <include file="db/changelog/changesets/create/agendamento/status-agendamento.xml"/>
+    <include file="db/changelog/changesets/create/agendamento/agendamento.xml"/>
+    <include file="db/changelog/changesets/create/agendamento/agendamento-servico.xml"/>
+    <include file="db/changelog/changesets/create/empresa/logo-empresa.xml"/>
+    <include file="db/changelog/changesets/create/empresa/empresa.xml"/>
+    <include file="db/changelog/changesets/create/configuracao/configuracao-sistema.xml"/>
+    <include file="db/changelog/changesets/create/servico/fornecedor-servico.xml"/>
+    <include file="db/changelog/changesets/create/servico/servico-terceirizado.xml"/>
+    <include file="db/changelog/changesets/create/servico/servico-terceirizado-tipo-veiculo.xml"/>
+    <include file="db/changelog/changesets/create/orcamento/orcamento-servico-terceirizado.xml"/>
+    <include file="db/changelog/changesets/create/agendamento/agendamento-servico-terceirizado.xml"/>
+    <include file="db/changelog/changesets/create/agendamento/agendamento-pagamento.xml"/>
+
+    <!-- INSERT -->
+    <include file="/db/changelog/changesets/insert/perfis/perfis.xml"/>
+    <include file="db/changelog/changesets/insert/usuario/usuario.xml"/>
+    <include file="db/changelog/changesets/insert/veiculo/marca-veiculo.xml"/>
+    <include file="db/changelog/changesets/insert/veiculo/tipo-veiculo.xml"/>
+    <include file="db/changelog/changesets/insert/veiculo/modelo-veiculo.xml"/>
+    <include file="db/changelog/changesets/insert/veiculo/cor-veiculo.xml"/>
+    <include file="db/changelog/changesets/insert/produto/unidade-produto.xml"/>
+    <include file="db/changelog/changesets/insert/agendamento/status-agendamento.xml"/>
+    <include file="db/changelog/changesets/insert/orcamento/status-orcamento.xml"/>
+    <include file="db/changelog/changesets/insert/cidade/uf.xml"/>
+    <include file="db/changelog/changesets/insert/cidade/cidade.xml"/>
+    <include file="db/changelog/changesets/insert/configuracao/configuracao-sistema.xml"/>
+    <include file="db/changelog/changesets/insert/pagamento/forma-pagamento.xml"/>
+    <include file="db/changelog/changesets/insert/pagamento/status-pagamento.xml"/>
+
+    <!-- INSERT PERMISSÕES -->
+    <include file="/db/changelog/changesets/insert/permissoes/permissoes-iniciais.xml"/>
+    <include file="/db/changelog/changesets/insert/permissoes/permissao-configuracao-sistema.xml"/>
+    <include file="/db/changelog/changesets/insert/permissoes/permissoes-perfis.xml"/>
+    <include file="/db/changelog/changesets/insert/permissoes/permissoes-servico-terceirizado.xml"/>
+    <include file="/db/changelog/changesets/insert/permissoes/permissoes-agendamento-pagamento.xml"/>
+
+</databaseChangeLog>

@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="insert-marca-veiculo-chevrolet" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'CHEVROLET'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Chevrolet"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-fiat" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'FIAT'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Fiat"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-ford" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'FORD'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Ford"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-honda" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'HONDA'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Honda"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-hyundai" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'HYUNDAI'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Hyundai"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-jeep" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'JEEP'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Jeep"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-nissan" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'NISSAN'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Nissan"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-peugeot" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'PEUGEOT'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Peugeot"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-renault" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'RENAULT'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Renault"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-toyota" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'TOYOTA'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Toyota"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-volkswagen" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'VOLKSWAGEN'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Volkswagen"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-mitsubishi" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'MITSUBISHI'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Mitsubishi"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-bmw" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'BMW'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="BMW"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-mercedes" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) LIKE 'MERCEDES%'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Mercedes-Benz"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-audi" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'AUDI'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Audi"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-citroen" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'CITROEN'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Citroen"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-volvo" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'VOLVO'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Volvo"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-landrover" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE REPLACE(UPPER(nome), ' ', '') = 'LANDROVER'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Land Rover"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-chery" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'CHERY'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Chery"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-kia" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'KIA'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Kia"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-jac" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'JAC'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Jac"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-troller" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'TROLLER'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Troller"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-suzuki" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'SUZUKI'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Suzuki"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-porsche" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'PORSCHE'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Porsche"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-subaru" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'SUBARU'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Subaru"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-dodge" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'DODGE'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Dodge"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-ram" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'RAM'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Ram"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-tesla" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'TESLA'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Tesla"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-haval" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'HAVAL'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Haval"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-byd" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'BYD'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Byd"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-yamaha" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'YAMAHA'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Yamaha"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-kawasaki" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'KAWASAKI'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Kawasaki"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-dafra" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'DAFRA'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Dafra"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-harleydavidson" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'HARLEY%'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Harley-Davidson"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-triumph" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'TRIUMPH'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Triumph"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-ducati" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'DUCATI'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="Ducati"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-marca-veiculo-ktm" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM marca_veiculo WHERE UPPER(nome) = 'KTM'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="marca_veiculo">
+            <column name="nome" value="KTM"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

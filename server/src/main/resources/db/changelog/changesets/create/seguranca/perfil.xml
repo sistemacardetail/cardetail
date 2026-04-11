@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="create-perfil" author="elielson.silva">
+        <createSequence
+                sequenceName="perfil_seq"
+                startValue="3"
+                incrementBy="1"/>
+
+        <createTable tableName="perfil">
+            <column name="id" type="BIGINT" defaultValueComputed="nextval('perfil_seq')">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="nome" type="varchar(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="descricao" type="varchar(200)"/>
+            <column name="nivel" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ativo" type="boolean" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="uuid"/>
+            <column name="updated_by" type="uuid"/>
+        </createTable>
+
+        <createIndex tableName="perfil" indexName="idx_perfil_nivel">
+            <column name="nivel"/>
+        </createIndex>
+        <createIndex tableName="perfil" indexName="idx_perfil_ativo">
+            <column name="ativo"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

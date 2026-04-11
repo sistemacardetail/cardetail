@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="insert-cor-veiculo-branco" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(1)
+                FROM cor_veiculo
+                WHERE REPLACE(UPPER(nome), ' ', '') = 'BRANCO'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="cor_veiculo">
+            <column name="nome" value="Branco"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-cor-veiculo-preto" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(1)
+                FROM cor_veiculo
+                WHERE REPLACE(UPPER(nome), ' ', '') = 'PRETO'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="cor_veiculo">
+            <column name="nome" value="Preto"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-cor-veiculo-prata" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(1)
+                FROM cor_veiculo
+                WHERE REPLACE(UPPER(nome), ' ', '') = 'PRATA'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="cor_veiculo">
+            <column name="nome" value="Prata"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-cor-veiculo-cinza" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(1)
+                FROM cor_veiculo
+                WHERE REPLACE(UPPER(nome), ' ', '') = 'CINZA'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="cor_veiculo">
+            <column name="nome" value="Cinza"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-cor-veiculo-vermelho" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(1)
+                FROM cor_veiculo
+                WHERE REPLACE(UPPER(nome), ' ', '') = 'VERMELHO'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="cor_veiculo">
+            <column name="nome" value="Vermelho"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-cor-veiculo-azul" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(1)
+                FROM cor_veiculo
+                WHERE REPLACE(UPPER(nome), ' ', '') = 'AZUL'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="cor_veiculo">
+            <column name="nome" value="Azul"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-cor-veiculo-verde" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(1)
+                FROM cor_veiculo
+                WHERE REPLACE(UPPER(nome), ' ', '') = 'VERDE'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="cor_veiculo">
+            <column name="nome" value="Verde"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-cor-veiculo-amarelo" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(1)
+                FROM cor_veiculo
+                WHERE REPLACE(UPPER(nome), ' ', '') = 'AMARELO'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="cor_veiculo">
+            <column name="nome" value="Amarelo"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-cor-veiculo-laranja" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(1)
+                FROM cor_veiculo
+                WHERE REPLACE(UPPER(nome), ' ', '') = 'LARANJA'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="cor_veiculo">
+            <column name="nome" value="Laranja"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-cor-veiculo-rosa" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(1)
+                FROM cor_veiculo
+                WHERE REPLACE(UPPER(nome), ' ', '') = 'ROSA'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="cor_veiculo">
+            <column name="nome" value="Rosa"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-cor-veiculo-marrom" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(1)
+                FROM cor_veiculo
+                WHERE REPLACE(UPPER(nome), ' ', '') = 'MARROM'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="cor_veiculo">
+            <column name="nome" value="Marrom"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-cor-veiculo-roxo" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(1)
+                FROM cor_veiculo
+                WHERE REPLACE(UPPER(nome), ' ', '') = 'ROXO'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="cor_veiculo">
+            <column name="nome" value="Roxo"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-cor-veiculo-bege" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(1)
+                FROM cor_veiculo
+                WHERE REPLACE(UPPER(nome), ' ', '') = 'BEGE'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="cor_veiculo">
+            <column name="nome" value="Bege"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

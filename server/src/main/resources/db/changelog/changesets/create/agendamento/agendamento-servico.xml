@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="create-table-agendamento-servico" author="elielson.silva">
+        <preConditions onFail="MARK_RAN"
+                       onFailMessage="Tabela agendamento_servico já existe, pulando criação.">
+            <not>
+                <tableExists tableName="agendamento_servico"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="agendamento_servico">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="id_agendamento" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_agendamento_servico_agendamento" references="agendamento(id)"/>
+            </column>
+            <column name="id_servico" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_agendamento_servico_servico" references="servico(id)"/>
+            </column>
+            <column name="valor" type="NUMBER(18,2)" defaultValueComputed="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

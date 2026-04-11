@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <property name="json.type" value="jsonb" dbms="postgresql"/>
+    <property name="json.type" value="clob" dbms="h2"/>
+
+    <changeSet id="create-auditoria-log" author="elielson.silva">
+        <createTable tableName="auditoria_log">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="usuario_id" type="uuid"/>
+            <column name="usuario_nome" type="varchar(100)"/>
+            <column name="acao" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="entidade" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="entidade_id" type="uuid"/>
+            <column name="dados_anteriores" type="${json.type}"/>
+            <column name="dados_novos" type="${json.type}"/>
+            <column name="ip_address" type="varchar(45)"/>
+            <column name="user_agent" type="varchar(500)"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="auditoria_log" indexName="idx_auditoria_usuario">
+            <column name="usuario_id"/>
+        </createIndex>
+        <createIndex tableName="auditoria_log" indexName="idx_auditoria_entidade">
+            <column name="entidade"/>
+            <column name="entidade_id"/>
+        </createIndex>
+        <createIndex tableName="auditoria_log" indexName="idx_auditoria_created_at">
+            <column name="created_at"/>
+        </createIndex>
+        <createIndex tableName="auditoria_log" indexName="idx_auditoria_acao">
+            <column name="acao"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

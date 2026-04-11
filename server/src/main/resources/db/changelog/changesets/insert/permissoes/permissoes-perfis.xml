@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="insert-permissoes-perfis" author="elielson.silva">
+        <insert tableName="permissao">
+            <column name="id" value="30"/>
+            <column name="codigo" value="PERFIS_VISUALIZAR"/>
+            <column name="descricao" value="Visualizar perfis"/>
+            <column name="modulo" value="CONFIGURACOES"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="31"/>
+            <column name="codigo" value="PERFIS_CRIAR"/>
+            <column name="descricao" value="Criar perfis"/>
+            <column name="modulo" value="CONFIGURACOES"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="32"/>
+            <column name="codigo" value="PERFIS_EDITAR"/>
+            <column name="descricao" value="Editar perfis"/>
+            <column name="modulo" value="CONFIGURACOES"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="33"/>
+            <column name="codigo" value="PERFIS_EXCLUIR"/>
+            <column name="descricao" value="Excluir perfis"/>
+            <column name="modulo" value="CONFIGURACOES"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-admin-permissao-perfis" author="elielson.silva">
+        <sql>
+            INSERT INTO perfil_permissao (id_perfil, id_permissao)
+            SELECT 1, id FROM permissao WHERE id IN (30, 31, 32, 33);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

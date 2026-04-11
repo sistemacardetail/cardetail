@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="insert-perfis-iniciais" author="elielson.silva">
+        <insert tableName="perfil">
+            <column name="id" value="1"/>
+            <column name="nome" value="ADMINISTRADOR"/>
+            <column name="descricao" value="Acesso total ao sistema"/>
+            <column name="nivel" value="1"/>
+            <column name="ativo" valueBoolean="true"/>
+        </insert>
+        <insert tableName="perfil">
+            <column name="id" value="2"/>
+            <column name="nome" value="FUNCIONARIO"/>
+            <column name="descricao" value="Funcionário executa funções do dia-a-dia"/>
+            <column name="nivel" value="2"/>
+            <column name="ativo" valueBoolean="true"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

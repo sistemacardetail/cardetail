@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="insert-permissoes-iniciais" author="elielson.silva">
+        <!-- Permissões - Configurações -->
+        <insert tableName="permissao">
+            <column name="id" value="1"/>
+            <column name="codigo" value="USUARIOS_VISUALIZAR"/>
+            <column name="descricao" value="Visualizar usuários"/>
+            <column name="modulo" value="CONFIGURACOES"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="2"/>
+            <column name="codigo" value="USUARIOS_CRIAR"/>
+            <column name="descricao" value="Criar usuários"/>
+            <column name="modulo" value="CONFIGURACOES"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="3"/>
+            <column name="codigo" value="USUARIOS_EDITAR"/>
+            <column name="descricao" value="Editar usuários"/>
+            <column name="modulo" value="CONFIGURACOES"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="4"/>
+            <column name="codigo" value="USUARIOS_EXCLUIR"/>
+            <column name="descricao" value="Excluir usuários"/>
+            <column name="modulo" value="CONFIGURACOES"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="5"/>
+            <column name="codigo" value="EMPRESA_VISUALIZAR"/>
+            <column name="descricao" value="Visualizar dados da empresa"/>
+            <column name="modulo" value="CONFIGURACOES"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="6"/>
+            <column name="codigo" value="EMPRESA_EDITAR"/>
+            <column name="descricao" value="Editar dados da empresa"/>
+            <column name="modulo" value="CONFIGURACOES"/>
+        </insert>
+
+        <!-- Permissões - Clientes -->
+        <insert tableName="permissao">
+            <column name="id" value="7"/>
+            <column name="codigo" value="CLIENTES_VISUALIZAR"/>
+            <column name="descricao" value="Visualizar clientes"/>
+            <column name="modulo" value="CLIENTES"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="8"/>
+            <column name="codigo" value="CLIENTES_CRIAR"/>
+            <column name="descricao" value="Criar clientes"/>
+            <column name="modulo" value="CLIENTES"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="9"/>
+            <column name="codigo" value="CLIENTES_EDITAR"/>
+            <column name="descricao" value="Editar clientes"/>
+            <column name="modulo" value="CLIENTES"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="10"/>
+            <column name="codigo" value="CLIENTES_EXCLUIR"/>
+            <column name="descricao" value="Excluir clientes"/>
+            <column name="modulo" value="CLIENTES"/>
+        </insert>
+
+        <!-- Permissões - Agendamentos -->
+        <insert tableName="permissao">
+            <column name="id" value="11"/>
+            <column name="codigo" value="AGENDAMENTOS_VISUALIZAR"/>
+            <column name="descricao" value="Visualizar agendamentos"/>
+            <column name="modulo" value="AGENDAMENTOS"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="12"/>
+            <column name="codigo" value="AGENDAMENTOS_CRIAR"/>
+            <column name="descricao" value="Criar agendamentos"/>
+            <column name="modulo" value="AGENDAMENTOS"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="13"/>
+            <column name="codigo" value="AGENDAMENTOS_EDITAR"/>
+            <column name="descricao" value="Editar agendamentos"/>
+            <column name="modulo" value="AGENDAMENTOS"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="14"/>
+            <column name="codigo" value="AGENDAMENTOS_EXCLUIR"/>
+            <column name="descricao" value="Excluir agendamentos"/>
+            <column name="modulo" value="AGENDAMENTOS"/>
+        </insert>
+
+        <!-- Permissões - Orçamentos -->
+        <insert tableName="permissao">
+            <column name="id" value="15"/>
+            <column name="codigo" value="ORCAMENTOS_VISUALIZAR"/>
+            <column name="descricao" value="Visualizar orçamentos"/>
+            <column name="modulo" value="ORCAMENTOS"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="16"/>
+            <column name="codigo" value="ORCAMENTOS_CRIAR"/>
+            <column name="descricao" value="Criar orçamentos"/>
+            <column name="modulo" value="ORCAMENTOS"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="17"/>
+            <column name="codigo" value="ORCAMENTOS_EDITAR"/>
+            <column name="descricao" value="Editar orçamentos"/>
+            <column name="modulo" value="ORCAMENTOS"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="18"/>
+            <column name="codigo" value="ORCAMENTOS_EXCLUIR"/>
+            <column name="descricao" value="Excluir orçamentos"/>
+            <column name="modulo" value="ORCAMENTOS"/>
+        </insert>
+
+        <!-- Permissões - Serviços -->
+        <insert tableName="permissao">
+            <column name="id" value="19"/>
+            <column name="codigo" value="SERVICOS_VISUALIZAR"/>
+            <column name="descricao" value="Visualizar serviços"/>
+            <column name="modulo" value="SERVICOS"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="20"/>
+            <column name="codigo" value="SERVICOS_CRIAR"/>
+            <column name="descricao" value="Criar serviços"/>
+            <column name="modulo" value="SERVICOS"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="21"/>
+            <column name="codigo" value="SERVICOS_EDITAR"/>
+            <column name="descricao" value="Editar serviços"/>
+            <column name="modulo" value="SERVICOS"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="22"/>
+            <column name="codigo" value="SERVICOS_EXCLUIR"/>
+            <column name="descricao" value="Excluir serviços"/>
+            <column name="modulo" value="SERVICOS"/>
+        </insert>
+
+        <!-- Permissões - Pacotes -->
+        <insert tableName="permissao">
+            <column name="id" value="23"/>
+            <column name="codigo" value="PACOTES_VISUALIZAR"/>
+            <column name="descricao" value="Visualizar pacotes"/>
+            <column name="modulo" value="PACOTES"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="24"/>
+            <column name="codigo" value="PACOTES_CRIAR"/>
+            <column name="descricao" value="Criar pacotes"/>
+            <column name="modulo" value="PACOTES"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="25"/>
+            <column name="codigo" value="PACOTES_EDITAR"/>
+            <column name="descricao" value="Editar pacotes"/>
+            <column name="modulo" value="PACOTES"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="26"/>
+            <column name="codigo" value="PACOTES_EXCLUIR"/>
+            <column name="descricao" value="Excluir pacotes"/>
+            <column name="modulo" value="PACOTES"/>
+        </insert>
+
+        <!-- Permissões - Cadastros -->
+        <insert tableName="permissao">
+            <column name="id" value="27"/>
+            <column name="codigo" value="CADASTROS_VISUALIZAR"/>
+            <column name="descricao" value="Visualizar cadastros auxiliares"/>
+            <column name="modulo" value="CADASTROS"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="28"/>
+            <column name="codigo" value="CADASTROS_GERENCIAR"/>
+            <column name="descricao" value="Gerenciar cadastros auxiliares"/>
+            <column name="modulo" value="CADASTROS"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-perfil-permissoes" author="elielson.silva">
+        <!-- ADMINISTRADOR - Todas as permissões -->
+        <sql>
+            INSERT INTO perfil_permissao (id_perfil, id_permissao)
+            SELECT 1, id FROM permissao;
+        </sql>
+
+        <!-- FUNCIONARIO - Visualizar e criar/editar operações -->
+        <sql>
+            INSERT INTO perfil_permissao (id_perfil, id_permissao)
+            SELECT 2, id
+            FROM permissao
+            WHERE codigo IN (
+                'CLIENTES_VISUALIZAR', 'CLIENTES_CRIAR', 'CLIENTES_EDITAR',
+                'AGENDAMENTOS_VISUALIZAR', 'AGENDAMENTOS_CRIAR', 'AGENDAMENTOS_EDITAR',
+                'ORCAMENTOS_VISUALIZAR', 'ORCAMENTOS_CRIAR', 'ORCAMENTOS_EDITAR',
+                'SERVICOS_VISUALIZAR',
+                'PACOTES_VISUALIZAR',
+                'CADASTROS_VISUALIZAR',
+                'EMPRESA_VISUALIZAR'
+            );
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

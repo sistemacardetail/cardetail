@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="create-table-servico-terceirizado-tipo-veiculo" author="elielson.silva">
+        <preConditions onFail="MARK_RAN"
+                       onFailMessage="Tabela servico_terceirizado_tipo_veiculo já existe, pulando criação.">
+            <not>
+                <tableExists tableName="servico_terceirizado_tipo_veiculo"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="servico_terceirizado_tipo_veiculo">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="id_servico_terceirizado" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_servico_terceirizado_tipo_veiculo_servico" references="servico_terceirizado(id)"/>
+            </column>
+            <column name="id_tipo" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_servico_terceirizado_tipo_veiculo_tipo_veiculo" references="tipo_veiculo(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

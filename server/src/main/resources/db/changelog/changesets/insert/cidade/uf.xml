@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="insert-ufs" author="elielson.silva">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="f">
+                SELECT COUNT(1) > 0 FROM uf
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="uf">
+            <column name="nome" value="Acre"/>
+            <column name="sigla" value="AC"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Alagoas"/>
+            <column name="sigla" value="AL"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Amapá"/>
+            <column name="sigla" value="AP"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Amazonas"/>
+            <column name="sigla" value="AM"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Bahia"/>
+            <column name="sigla" value="BA"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Ceará"/>
+            <column name="sigla" value="CE"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Distrito Federal"/>
+            <column name="sigla" value="DF"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Espírito Santo"/>
+            <column name="sigla" value="ES"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Goiás"/>
+            <column name="sigla" value="GO"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Maranhão"/>
+            <column name="sigla" value="MA"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Mato Grosso"/>
+            <column name="sigla" value="MT"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Mato Grosso do Sul"/>
+            <column name="sigla" value="MS"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Minas Gerais"/>
+            <column name="sigla" value="MG"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Pará"/>
+            <column name="sigla" value="PA"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Paraíba"/>
+            <column name="sigla" value="PB"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Paraná"/>
+            <column name="sigla" value="PR"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Pernambuco"/>
+            <column name="sigla" value="PE"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Piauí"/>
+            <column name="sigla" value="PI"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Rio de Janeiro"/>
+            <column name="sigla" value="RJ"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Rio Grande do Norte"/>
+            <column name="sigla" value="RN"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Rio Grande do Sul"/>
+            <column name="sigla" value="RS"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Rondônia"/>
+            <column name="sigla" value="RO"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Roraima"/>
+            <column name="sigla" value="RR"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Santa Catarina"/>
+            <column name="sigla" value="SC"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="São Paulo"/>
+            <column name="sigla" value="SP"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Sergipe"/>
+            <column name="sigla" value="SE"/>
+        </insert>
+
+        <insert tableName="uf">
+            <column name="nome" value="Tocantins"/>
+            <column name="sigla" value="TO"/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>

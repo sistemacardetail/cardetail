@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="create-permissao" author="elielson.silva">
+        <createTable tableName="permissao">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="codigo" type="varchar(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="descricao" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modulo" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="permissao" indexName="idx_permissao_modulo">
+            <column name="modulo"/>
+        </createIndex>
+        <createIndex tableName="permissao" indexName="idx_permissao_codigo">
+            <column name="codigo"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

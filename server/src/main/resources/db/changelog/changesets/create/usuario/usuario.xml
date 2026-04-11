@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="create-table-usuario" author="elielson.silva">
+        <preConditions onFail="MARK_RAN"
+                       onFailMessage="Tabela usuario já existe, pulando criação.">
+            <not>
+                <tableExists tableName="usuario"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="usuario">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="nome" type="VARCHAR(50)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="login" type="VARCHAR(50)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="senha" type="VARCHAR(200)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="ativo" type="boolean" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_login" type="timestamp"/>
+            <column name="attempts_login" type="int" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="admin" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_perfil" type="BIGINT">
+                <constraints foreignKeyName="fk_usuario_perfil" references="perfil(id)" nullable="false"/>
+            </column>
+            <column name="blocked_at" type="timestamp"/>
+        </createTable>
+
+        <createIndex tableName="usuario" indexName="idx_usuario_ativo">
+            <column name="ativo"/>
+        </createIndex>
+
+        <createIndex tableName="usuario" indexName="idx_usuario_perfil">
+            <column name="id_perfil"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

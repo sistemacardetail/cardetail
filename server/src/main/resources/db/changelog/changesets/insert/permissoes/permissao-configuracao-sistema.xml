@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="insert-permissao-configuracao" author="elielson.silva">
+        <insert tableName="permissao">
+            <column name="id" value="29"/>
+            <column name="codigo" value="CONFIGURACAO_SISTEMA_GERENCIAR"/>
+            <column name="descricao" value="Gerenciar configurações do sistema"/>
+            <column name="modulo" value="CONFIGURACAO_SISTEMA"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-admin-permissao-configuracao" author="elielson.silva">
+        <sql>
+            INSERT INTO perfil_permissao (id_perfil, id_permissao) VALUES (1,29);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

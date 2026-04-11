@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="create-table-telefone" author="elielson.silva">
+        <preConditions onFail="MARK_RAN"
+                       onFailMessage="Tabela telefone já existe, pulando criação.">
+            <not>
+                <tableExists tableName="telefone"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="telefone">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="ddd" type="VARCHAR(2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="numero" type="VARCHAR(9)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-table-telefone-cliente" author="elielson.silva">
+        <preConditions onFail="MARK_RAN"
+                       onFailMessage="Tabela telefone_cliente já existe, pulando criação.">
+            <not>
+                <tableExists tableName="telefone_cliente"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="telefone_cliente">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="id_telefone" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_telefone_telefone" references="telefone(id)"/>
+            </column>
+            <column name="id_cliente" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_telefone_cliente" references="cliente(id)"/>
+            </column>
+            <column name="principal" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

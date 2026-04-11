@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="insert-permissoes-servico-terceirizado" author="elielson.silva">
+        <insert tableName="permissao">
+            <column name="id" value="34"/>
+            <column name="codigo" value="SERVICO_TERCEIRIZADO_VISUALIZAR"/>
+            <column name="descricao" value="Visualizar serviços terceirizados"/>
+            <column name="modulo" value="SERVICO_TERCEIRIZADO"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="35"/>
+            <column name="codigo" value="SERVICO_TERCEIRIZADO_CRIAR"/>
+            <column name="descricao" value="Criar serviços terceirizados"/>
+            <column name="modulo" value="SERVICO_TERCEIRIZADO"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="36"/>
+            <column name="codigo" value="SERVICO_TERCEIRIZADO_EDITAR"/>
+            <column name="descricao" value="Editar serviços terceirizados"/>
+            <column name="modulo" value="SERVICO_TERCEIRIZADO"/>
+        </insert>
+        <insert tableName="permissao">
+            <column name="id" value="37"/>
+            <column name="codigo" value="SERVICO_TERCEIRIZADO_EXCLUIR"/>
+            <column name="descricao" value="Excluir serviços terceirizados"/>
+            <column name="modulo" value="SERVICO_TERCEIRIZADO"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-admin-permissao-servico-terceirizado" author="elielson.silva">
+        <sql>
+            INSERT INTO perfil_permissao (id_perfil, id_permissao)
+            SELECT 1, id FROM permissao WHERE id IN (34, 35, 36, 37);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

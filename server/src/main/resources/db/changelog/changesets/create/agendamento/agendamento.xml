@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="create-table-agendamento" author="elielson.silva">
+        <preConditions onFail="MARK_RAN"
+                       onFailMessage="Tabela agendamento já existe, pulando criação.">
+            <not>
+                <tableExists tableName="agendamento"/>
+            </not>
+        </preConditions>
+
+        <createSequence
+                sequenceName="agendamento_seq"
+                startValue="1"
+                incrementBy="1"/>
+
+        <createTable tableName="agendamento">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="numero" type="BIGINT" defaultValueComputed="nextval('agendamento_seq')">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="id_veiculo" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_agendamento_veiculo" references="veiculo(id)"/>
+            </column>
+            <column name="observacao" type="VARCHAR(3000)"/>
+            <column name="valor_desconto" type="NUMBER(18,2)" defaultValueComputed="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data_previsao_inicio" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data_previsao_fim" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_pacote" type="UUID">
+                <constraints foreignKeyName="fk_agendamento_pacote" references="pacote(id)"/>
+            </column>
+            <column name="valor_pacote" type="NUMBER(18,2)" defaultValueComputed="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data_criacao" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_orcamento" type="UUID">
+                <constraints foreignKeyName="fk_agendamento_orcamento" references="orcamento(id)"/>
+            </column>
+            <column name="id_status" type="numeric" defaultValueNumeric="1">
+                <constraints foreignKeyName="fk_agendamento_status" references="status_agendamento(id)" nullable="false"/>
+            </column>
+            <column name="id_status_pagamento" type="numeric" defaultValueNumeric="1">
+                <constraints nullable="false"
+                             foreignKeyName="fk_agendamento_status_pagamento"
+                             references="status_pagamento(id)"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="agendamento" indexName="idx_agendamento_veiculo">
+            <column name="id_veiculo"/>
+        </createIndex>
+
+        <createIndex tableName="agendamento" indexName="idx_agendamento_status">
+            <column name="id_status"/>
+        </createIndex>
+
+        <createIndex tableName="agendamento" indexName="idx_agendamento_status_pagamento">
+            <column name="id_status_pagamento"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

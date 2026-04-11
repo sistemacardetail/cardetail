@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="create-table-produto-automotivo" author="elielson.silva">
+        <preConditions onFail="MARK_RAN"
+                       onFailMessage="Tabela produto_automotivo já existe, pulando criação.">
+            <not>
+                <tableExists tableName="produto_automotivo"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="produto_automotivo">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="nome" type="VARCHAR(100)">
+                <constraints unique="true" nullable="false"/>
+            </column>			
+            <column name="descricao" type="VARCHAR(1000)"/>
+            <column name="id_marca" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_produto_automotivo_marca" references="marca_produto_automotivo(id)"/>
+            </column>
+            <column name="id_tipo" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_produto_automotivo_tipo" references="tipo_produto_automotivo(id)"/>
+            </column>
+            <column name="id_tamanho" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_produto_automotivo_tamanho" references="tamanho_produto_automotivo(id)"/>
+            </column>
+            <column name="data_criacao" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

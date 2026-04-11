@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="insert-unidade-produto-ml" author="elielson.silva">
+        <preConditions onFail="MARK_RAN" onFailMessage="Unidade Produto 'ml' já existe.">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM unidade_produto WHERE UPPER(nome) = 'ML'
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="unidade_produto">
+            <column name="nome" value="Ml"/>
+            <column name="descricao" value="Mililitro"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-unidade-produto-l" author="elielson.silva">
+        <preConditions onFail="MARK_RAN" onFailMessage="Unidade Produto 'l' já existe.">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM unidade_produto WHERE UPPER(nome) = 'L'
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="unidade_produto">
+            <column name="nome" value="L"/>
+            <column name="descricao" value="Litro"/>		
+        </insert>
+    </changeSet>
+	
+    <changeSet id="insert-unidade-produto-gr" author="elielson.silva">
+        <preConditions onFail="MARK_RAN" onFailMessage="Unidade Produto 'gr' já existe.">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM unidade_produto WHERE UPPER(nome) = 'GR'
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="unidade_produto">
+            <column name="nome" value="gr"/>
+            <column name="descricao" value="Grama"/>		
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-unidade-produto-kg" author="elielson.silva">
+        <preConditions onFail="MARK_RAN" onFailMessage="Unidade Produto 'kg' já existe.">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM unidade_produto WHERE UPPER(nome) = 'KG'
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="unidade_produto">
+            <column name="nome" value="Kg"/>
+            <column name="descricao" value="Quilograma"/>		
+        </insert>
+    </changeSet>
+	
+    <changeSet id="insert-unidade-produto-un" author="elielson.silva">
+        <preConditions onFail="MARK_RAN" onFailMessage="Unidade Produto 'un' já existe.">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM unidade_produto WHERE UPPER(nome) = 'UN'
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="unidade_produto">
+            <column name="nome" value="Un"/>
+            <column name="descricao" value="Unidade"/>		
+        </insert>
+    </changeSet>	
+
+</databaseChangeLog>

@@ -1,0 +1,863 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="insert-modelos-chevrolet" author="elielson.silva">
+		<sql dbms="postgresql">
+            INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+            SELECT nome, m.id, t.id
+            FROM UNNEST(ARRAY[
+                'Onix', 'Prisma', 'Celta', 'Corsa', 'Cruze', 'Vectra',
+                'Astra', 'Opala', 'Omega', 'Monza', 'Kadett', 'Chevette',
+                'Classic', 'Agile', 'Meriva'
+            ]) AS nome
+            CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'CHEVROLET') m
+            CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+            INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+            SELECT nome, m.id, t.id
+            FROM UNNEST(ARRAY[
+                'S10', 'Silverado', 'D20', 'Montana'
+            ]) AS nome
+            CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'CHEVROLET') m
+            CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CAMINHONETE') t;
+
+            INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+            SELECT nome, m.id, t.id
+            FROM UNNEST(ARRAY[
+                'Tracker', 'Captiva', 'Blazer', 'Equinox', 'Zafira', 'Spin'
+            ]) AS nome
+            CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'CHEVROLET') m
+            CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+        </sql>
+    </changeSet>
+	
+    <changeSet id="insert-modelos-fiat" author="elielson.silva">
+		<sql dbms="postgresql">
+            INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+            SELECT nome, m.id, t.id
+            FROM UNNEST(ARRAY[
+                '147', 'Argo', 'Bravo', 'Mobi', 'Palio', 'Punto',
+                'Cronos', 'Linea', 'Siena', 'Doblo', 'Elba'
+            ]) AS nome
+            CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'FIAT') m
+            CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+            INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+            SELECT nome, m.id, t.id
+            FROM UNNEST(ARRAY[
+                'Fastback', 'Pulse', 'Freemont'
+            ]) AS nome
+            CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'FIAT') m
+            CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+
+            INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+            SELECT nome, m.id, t.id
+            FROM UNNEST(ARRAY[
+                'Strada', 'Toro', 'Titano'
+            ]) AS nome
+            CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'FIAT') m
+            CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CAMINHONETE') t;
+        </sql>
+    </changeSet>
+
+    <changeSet id="insert-modelos-ford" author="elielson.silva">
+		<sql dbms="postgresql">
+            INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+            SELECT nome, m.id, t.id
+            FROM UNNEST(ARRAY[
+                'Fiesta', 'Focus', 'Ka', 'Del Rey', 'Escort', 'Fusion', 'Maverick', 'Verona', 'Corcel', 'Landau'
+            ]) AS nome
+            CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'FORD') m
+            CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+            INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+            SELECT nome, m.id, t.id
+            FROM UNNEST(ARRAY[
+                'Pampa', 'F-1000', 'F-250', 'Ranger'
+            ]) AS nome
+            CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'FORD') m
+            CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CAMINHONETE') t;
+
+            INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+            SELECT nome, m.id, t.id
+            FROM UNNEST(ARRAY[
+                'EcoSport', 'Territory', 'Edge', 'Bronco'
+            ]) AS nome
+            CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'FORD') m
+            CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+        </sql>
+    </changeSet>
+	
+    <changeSet id="insert-modelos-honda" author="elielson.silva">
+		<sql dbms="postgresql">
+            INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+            SELECT nome, m.id, t.id
+            FROM UNNEST(ARRAY[
+                'Civic', 'Accord', 'Fit', 'City'
+            ]) AS nome
+            CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'HONDA') m
+            CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+            INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+            SELECT nome, m.id, t.id
+            FROM UNNEST(ARRAY[
+                'HR-V', 'CR-V'
+            ]) AS nome
+            CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'HONDA') m
+            CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+        </sql>
+    </changeSet>
+	
+	<changeSet id="insert-modelos-hyundai" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'HB20', 'Elantra', 'Sonata', 'Azera'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'HYUNDAI') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Creta', 'Tucson', 'iX35', 'Santa Fé'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'HYUNDAI') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Santa Cruz'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'HYUNDAI') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CAMINHONETE') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-jeep" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Renegade', 'Compass', 'Cherokee', 'Commander'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'JEEP') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Gladiator'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'JEEP') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CAMINHONETE') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-nissan" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'March', 'Versa', 'Sentra', 'GT-R'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'NISSAN') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Kicks'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'NISSAN') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Frontier'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'NISSAN') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CAMINHONETE') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-peugeot" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'206', '207', '208', '306', '307', '308', '408', '508'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'PEUGEOT') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'2008', '3008', '5008'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'PEUGEOT') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-renault" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Clio', 'Symbol', 'Logan', 'Sandero', 'Megane', 'Fluence', 'Kwid'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'RENAULT') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Duster', 'Captur'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'RENAULT') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Oroch'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'RENAULT') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CAMINHONETE') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-volkswagen" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Gol', 'Polo', 'Virtus', 'Voyage', 'Fox', 'Up', 'Golf', 'Jetta', 
+				'Passat', 'Santana', 'Fusca', 'Parati', 'Saveiro', 'Variant'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'VOLKSWAGEN') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'T-Cross', 'Nivus', 'Taos', 'Tiguan', 'Touareg'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'VOLKSWAGEN') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Amarok'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'VOLKSWAGEN') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CAMINHONETE') t;
+		</sql>
+	</changeSet>
+	
+    <changeSet id="insert-modelos-mitsubishi" author="elielson.silva">
+		<sql dbms="postgresql">
+            INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+            SELECT nome, m.id, t.id
+            FROM UNNEST(ARRAY[
+                'Lancer', 'Eclipse', 'Galant'
+            ]) AS nome
+            CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'MITSUBISHI') m
+            CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+            INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+            SELECT nome, m.id, t.id
+            FROM UNNEST(ARRAY[
+                'Pajero', 'Outlander'
+            ]) AS nome
+            CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'MITSUBISHI') m
+            CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+
+            INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+            SELECT nome, m.id, t.id
+            FROM UNNEST(ARRAY[
+                'L200'
+            ]) AS nome
+            CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'MITSUBISHI') m
+            CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CAMINHONETE') t;
+        </sql>
+    </changeSet>
+	
+	<changeSet id="insert-modelos-bmw" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Série 1', 'Série 2', 'Série 3', 'Série 4', 'Série 5', 'Série 6', 'Série 7', 'Série 8',
+				'M2', 'M3', 'M4', 'M5', 'M8',
+				'i4', 'i7',
+				'Z3', 'Z4'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'BMW') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'iX', 'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'BMW') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-mercedes" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'A 200', 'A 250', 'A 35', 'A 45',
+				'C 180', 'C 200', 'C 300', 'C 43', 'C 63',
+				'E 350', 'E 450', 'E 53', 'E 63', 'E 73', 'E-Class',
+				'S 500', 'S 580', 'S 600', 'S 680', 'S 63', 'S 73',
+				'CLA 180', 'CLA 200', 'CLA 250', 'CLA 35', 'CLA 45',
+				'CLS 350', 'CLS 400', 'CLS 450', 'CLS 500', 'CLS 550', 'CLS 53', 'CLS 63'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) LIKE 'MERCEDES%') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'GLA 200', 'GLA 250', 'GLA 35', 'GLA 45',
+				'GLB 200', 'GLB 250', 'GLB 35',
+				'GLC 200', 'GLC 250', 'GLC 300', 'GLC 350e', 'GLC 43', 'GLC 63',
+				'GLE 250', 'GLE 300', 'GLE 350', 'GLE 400', 'GLE 450', 'GLE 500', 'GLE 53', 'GLE 63',
+				'GLS 350', 'GLS 400', 'GLS 450', 'GLS 500', 'GLS 580', 'GLS 600', 'GLS 63',
+				'EQA', 'EQB', 'EQC'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) LIKE 'MERCEDES%') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-audi" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'A1', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8',
+				'TT', 'R8',
+				'RS3', 'RS4', 'RS5', 'RS6', 'RS7'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'AUDI') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Q3', 'Q5', 'Q7', 'Q8',
+				'Q4 e-tron', 'Q8 e-tron',
+				'RSQ3', 'RSQ5', 'RSQ7', 'RSQ8'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'AUDI') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-citroen" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'C3', 'C4', 'C5', 'Xsara'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'CITROEN') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+			
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'C4 Cactus', 'C3 Aircross', 'C5 Aircross'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'CITROEN') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-volvo" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'S40', 'S60', 'S80', 'S90',
+				'V40', 'V50', 'V60', 'V70', 'V90'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'VOLVO') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'XC40', 'XC60', 'XC90'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'VOLVO') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-suvs-land-rover" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Evoque', 'Velar', 'Discovery', 'Defender'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'LAND ROVER') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+		</sql>
+	</changeSet>
+
+	<changeSet id="insert-modelos-chery" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Arrizo 5', 'Arrizo 6'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'CHERY') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Tiggo 2', 'Tiggo 3X', 'Tiggo 5X', 'Tiggo 7', 'Tiggo 8'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'CHERY') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-kia" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Picanto', 'Rio', 'Cerato'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'KIA') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Soul', 'Sportage', 'Sorento'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'KIA') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+		</sql>
+	</changeSet>
+
+	<changeSet id="insert-modelos-jac" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'J2', 'J3', 'J5', 'J6', 'e-JS1'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'JAC') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'T8'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'JAC') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CAMINHONETE') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'T40', 'T50', 'T60', 'T80', 'e-JS4'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'JAC') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-troller" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'T4'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'TROLLER') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Pantanal'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'TROLLER') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CAMINHONETE') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-suzuki" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Baleno', 'Swift', 'Celerio', 'SX4'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'SUZUKI') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+		
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Vitara', 'Jimny'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'SUZUKI') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+		</sql>
+	</changeSet>
+
+	<changeSet id="insert-modelos-porsche" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'911', '718', 'Taycan', 'Panamera'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'PORSCHE') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Macan', 'Cayenne'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'PORSCHE') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+		</sql>
+	</changeSet>
+
+	<changeSet id="insert-modelos-subaru" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Impreza', 'WRX'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'SUBARU') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Forester', 'Outback'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'SUBARU') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+		</sql>
+	</changeSet>
+
+	<changeSet id="insert-modelos-dodge" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Charger', 'Dart'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'DODGE') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Journey', 'Durango'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'DODGE') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+		</sql>
+	</changeSet>
+
+	<changeSet id="insert-modelos-ram" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'700', '1500', '2500', '3500'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'RAM') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CAMINHONETE') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Rampage'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'RAM') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-tesla" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Model 3', 'Model S'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'TESLA') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Model X', 'Model Y'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'TESLA') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Cybertruck'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'TESLA') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CAMINHONETE') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-haval" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'H6', 'Ora', 'F7', 'H9'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'HAVAL') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-byd" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Dolphin', 'Seal', 'Han'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'BYD') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Yuan', 'Song', 'Tan'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'BYD') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Shark'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'BYD') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CAMINHONETE') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-moto-honda" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'CG 125', 'CG 150', 'CG 160', 'Biz', 'Pop 100', 'XRE 190', 'XRE 300',
+				'CB 250 Twister', 'CB 300F Twister', 'CB 500X', 'CB 500F', 'CB 600F Hornet',
+				'CB 650R', 'CB 1000R', 'NC 750X', 'CRF 230F', 'CRF 250F', 'CRF 1100L Africa Twin',
+				'CBR 250R', 'CBR 500R', 'CBR 600RR', 'CBR 1000RR Fireblade', 'NXR 125 Bros',
+				'NXR 150 Bros', 'NXR 160 Bros', 'PCX 150', 'CB 500 Hornet'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'HONDA') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'MOTO') t;
+		</sql>
+	</changeSet>
+
+	<changeSet id="insert-modelos-moto-bmw" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'G 310', 'F 750', 'F 850', 'F 900', 'R 1250', 'S 1000'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'BMW') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'MOTO') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-moto-suzuki" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'GSX-R 1000', 'GSX-R 750', 'GSX-R 600', 'GSX-S 1000', 'GSX-S 750', 'Hayabusa',
+				'V-Strom 1050', 'V-Strom 800', 'V-Strom 650', 'V-Strom 250'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'SUZUKI') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'MOTO') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-moto-yamaha" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'YZF-R1', 'YZF-R6', 'YZF-R3', 'MT-10', 'MT-09', 'MT-07', 'MT-03', 'FZ25',
+				'Fazer 250', 'Fazer 150', 'Factor 150', 'Factor 125', 'XJ6 N', 'XT 660R', 
+				'XT 660Z Ténéré', 'Ténéré 700', 'Lander 250', 'Crosser 150', 'NMax 160', 
+				'Neo 125', 'Crypton 125', 'XTZ 125', 'XTZ 250', 'WR 450F', 'YZ 250F', 'YZ 450F'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'YAMAHA') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'MOTO') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-moto-kawasaki" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Ninja 300', 'Ninja 400', 'Ninja 500', 'Ninja 650', 'Ninja ZX-4R', 'Ninja ZX-6R',
+				'Ninja ZX-10R', 'Ninja ZX-14R', 'Z300', 'Z400', 'Z500', 'Z650', 'Z900', 'Z1000',
+				'Z H2', 'Versys 300', 'Versys 650', 'Versys 1000', 'Vulcan S', 'Vulcan 900 Custom',
+				'Vulcan 1700 Vaquero', 'KX 250', 'KX 450', 'KLX 230', 'KLX 300R'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'KAWASAKI') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'MOTO') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-moto-dafra" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Apache RTR 200', 'Apache RTR 160', 'Citycom 300i', 'Cruiser 150', 'Horizon 150', 'Horizon 250',
+				'Kansas 150', 'Next 250', 'Next 300', 'Maxsym 400i', 'Smart 125', 'Speed 150', 'Super 50',
+				'Zig 50', 'Zig 100', 'VS 150'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'DAFRA') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'MOTO') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-moto-harley" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Sportster Iron 883', 'Sportster Forty-Eight', 'Sportster Nightster', 'Sportster Roadster',
+				'Softail Standard', 'Softail Fat Bob', 'Softail Fat Boy', 'Softail Street Bob', 'Softail Heritage Classic',
+				'Softail Low Rider S', 'Softail Breakout', 'Softail Deluxe', 'Softail Rocker C', 'Softail Springer',
+				'Touring Road King', 'Touring Street Glide', 'Touring Road Glide', 'Touring Electra Glide',
+				'Touring Ultra Limited', 'CVO Street Glide', 'CVO Road Glide', 'CVO Ultra Limited',
+				'Pan America 1250', 'Pan America 1250 Special', 'LiveWire', 'V-Rod', 'Night Rod',
+				'Dyna Super Glide', 'Dyna Fat Bob', 'Dyna Wide Glide', 'Dyna Street Bob'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) LIKE 'HARLEY%') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'MOTO') t;
+		</sql>
+	</changeSet>
+
+	<changeSet id="insert-modelos-moto-triumph" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Bonneville T100', 'Bonneville T120', 'Bonneville Bobber', 'Bonneville Speedmaster', 'Street Twin',
+				'Speed Twin', 'Thruxton RS', 'Scrambler 900', 'Scrambler 1200 XC', 'Scrambler 1200 XE', 
+				'Tiger 660 Sport', 'Tiger 850 Sport', 'Tiger 900 GT', 'Tiger 900 Rally', 'Tiger 900 Rally Pro', 
+				'Tiger 1200 GT Pro', 'Tiger 1200 Rally Pro', 'Tiger 1200 Rally Explorer', 'Tiger 1200 GT Explorer',
+				'Speed Triple 1200 RS', 'Speed Triple 1200 RR', 'Street Triple 765 R', 'Street Triple 765 RS',
+				'Daytona Moto2 765', 'Rocket 3 R', 'Rocket 3 GT'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'TRIUMPH') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'MOTO') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-moto-ducati" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Monster 797', 'Monster 821', 'Monster SP', 'Diavel 1260', 'Diavel V4', 'XDiavel', 
+				'Streetfighter V2', 'Streetfighter V4', 'Streetfighter V4 SP', 'SuperSport 950', 
+				'SuperSport 950 S', 'Hypermotard 950', 'Hypermotard 950 SP', 'Panigale V2', 'Panigale V4', 
+				'Panigale V4 S', 'Panigale V4 R', 'Multistrada V2', 'Multistrada V2 S', 'Multistrada V4', 
+				'Multistrada V4 S', 'Multistrada V4 Rally', 'Multistrada V4 Pikes Peak', 'DesertX', 
+				'Scrambler Icon', 'Scrambler Nightshift', 'Scrambler Full Throttle', 'Scrambler 1100 Sport Pro'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'DUCATI') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'MOTO') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-moto-ktm" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'200 Duke', '250 Duke', '390 Duke', '790 Duke', '890 Duke R', '1290 Super Duke R', 
+				'RC 200', 'RC 390', '250 Adventure', '390 Adventure', '790 Adventure', '890 Adventure', 
+				'1290 Super Adventure R', '1290 Super Adventure S', 'EXC 250 TPI', 'EXC 300 TPI', 
+				'EXC 350 F', 'EXC 450 F', 'EXC 500 F', '450 SX-F', '250 SX-F'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'KTM') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'MOTO') t;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="insert-modelos-toyota" author="elielson.silva">
+		<sql dbms="postgresql">
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Corolla', 'Etios', 'Yaris',
+				'Supra', 'Prius'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'TOYOTA') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CARRO') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'Hilux', 'Tundra'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'TOYOTA') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'CAMINHONETE') t;
+
+			INSERT INTO modelo_veiculo (nome, id_marca, id_tipo)
+			SELECT nome, m.id, t.id
+			FROM UNNEST(ARRAY[
+				'SW4', 'Corolla Cross'
+			]) AS nome
+			CROSS JOIN (SELECT id FROM marca_veiculo WHERE UPPER(nome) = 'TOYOTA') m
+			CROSS JOIN (SELECT id FROM tipo_veiculo WHERE UPPER(descricao) = 'SUV') t;
+		</sql>
+	</changeSet>
+	
+</databaseChangeLog>
