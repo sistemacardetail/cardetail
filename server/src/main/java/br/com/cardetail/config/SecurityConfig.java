@@ -1,5 +1,6 @@
 package br.com.cardetail.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -17,17 +18,20 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import br.com.cardetail.config.jwt.JwtAuthenticationFilter;
 import br.com.cardetail.config.jwt.JwtTokenProvider;
 import br.com.cardetail.service.UsuarioService;
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
 @EnableAspectJAutoProxy
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final UsuarioService usuarioService;
     private final JwtTokenProvider tokenProvider;
+
+    @Value("${app.cors.allowed-origins:http://localhost:4200,http://localhost:5173}")
+    private String corsAllowedOrigins;
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
@@ -45,7 +49,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:4200", "http://localhost:5173")
+                        .allowedOrigins(corsAllowedOrigins.split(","))
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
@@ -62,7 +66,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/empresas/*/logo").permitAll()
                         .requestMatchers("/api/configuracoes-sistema/cor-primaria").permitAll()
-                        .requestMatchers("/actuator/health/**").permitAll()
+                        .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         .requestMatchers("/actuator/info").permitAll()
                         .anyRequest().authenticated()
                 )
