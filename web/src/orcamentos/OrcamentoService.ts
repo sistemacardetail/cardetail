@@ -9,7 +9,7 @@ import {
 } from '../services/apiService';
 import { PacoteDTO } from '../pacotes';
 import { ServicoDTO } from '../servicos';
-import { ClienteListDTO, VeiculoDTO } from '../clientes/ClienteService';
+import { ClienteDTO, ClienteListDTO, VeiculoDTO } from '../clientes/ClienteService';
 import { ServicoTerceirizadoDTO } from '../servicos-terceirizados';
 
 export type OrcamentoStatus = 'PENDENTE' | 'AGENDADO' | 'CANCELADO';
@@ -33,6 +33,7 @@ export interface OrcamentoServicoTerceirizadoDTO {
 export interface OrcamentoDTO {
     id?: string;
     numero?: number;
+    cliente?: ClienteDTO;
     veiculo?: VeiculoDTO;
     valor: number;
     valorDesconto: number;

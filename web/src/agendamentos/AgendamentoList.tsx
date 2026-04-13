@@ -10,6 +10,7 @@ import {
     formatTime,
     getStatusPagamentoColor,
     getStatusPagamentoLabel,
+    renderClienteCell,
     renderCurrencyCell,
     renderPacoteCell,
     renderServicosCell,
@@ -36,7 +37,7 @@ const columns: GridColDef[] = [
         headerName: 'Cliente',
         width: 150,
         sortable: false,
-        renderCell: (params) => params.value || '-',
+        renderCell: renderClienteCell,
     },
     {
         field: 'veiculo',

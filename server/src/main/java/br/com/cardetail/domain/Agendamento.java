@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.logging.log4j.util.Strings;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.validator.constraints.Length;
 
@@ -108,8 +107,8 @@ public class Agendamento implements BaseDomain<UUID> {
         return nonNull(orcamento);
     }
 
-    public String getClienteNome() {
-        return nonNull(veiculo) ? veiculo.getClienteNome() : Strings.EMPTY;
+    public Cliente getCliente() {
+        return nonNull(veiculo) ? veiculo.getCliente() : null;
     }
 
     public void setStatusByDate() {

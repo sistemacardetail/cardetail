@@ -50,7 +50,9 @@ function OrcamentoEditForm({ initialValues }: OrcamentoEditFormProps) {
         setErrors,
         isDirty,
         clearDirty,
+        cliente,
         handleChange,
+        handleClienteChange,
         handleVeiculoChange,
         handlePacoteChange,
         handleAddServico,
@@ -308,6 +310,8 @@ function OrcamentoEditForm({ initialValues }: OrcamentoEditFormProps) {
                 <OrcamentoFormFields
                     values={values}
                     onChange={handleChange}
+                    cliente={cliente}
+                    onClienteChange={handleClienteChange}
                     onVeiculoChange={handleVeiculoChange}
                     onPacoteChange={handlePacoteChange}
                     onAddServico={handleAddServico}

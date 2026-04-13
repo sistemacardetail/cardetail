@@ -5,12 +5,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import br.com.cardetail.core.repository.BaseRepository;
 import br.com.cardetail.domain.Cliente;
+import br.com.cardetail.dto.ClienteAutocompleteDTO;
 
 @Repository
 public interface ClienteRepository extends BaseRepository<Cliente, UUID> {
@@ -37,4 +39,14 @@ public interface ClienteRepository extends BaseRepository<Cliente, UUID> {
     """)
     List<String> getTelefonesRepetidos(@Param("idCliente") UUID idCLiente, @Param("telefones") Set<String> telefones);
 
+    @Query("""
+        SELECT new br.com.cardetail.dto.ClienteAutocompleteDTO(c.id, c.nome, t.numero, c.observacao)
+        FROM Cliente c
+        LEFT JOIN c.telefones ct ON ct.principal = true
+        LEFT JOIN ct.telefone t
+        WHERE c.ativo = true
+        AND (LOWER(c.nome) LIKE LOWER(:search) OR LOWER(COALESCE(t.numero, '')) LIKE LOWER(:search))
+        ORDER BY c.nome
+    """)
+    List<ClienteAutocompleteDTO> findToAutocomplete(final String search, final Pageable pageable);
 }

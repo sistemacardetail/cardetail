@@ -11,9 +11,10 @@ import org.springframework.stereotype.Service;
 
 import br.com.cardetail.core.service.BaseService;
 import br.com.cardetail.domain.Cliente;
+import br.com.cardetail.dto.ClienteAutocompleteDTO;
 import br.com.cardetail.dto.ClienteDTO;
-import br.com.cardetail.dto.VeiculoClienteDTO;
 import br.com.cardetail.mapper.ClienteMapper;
+import br.com.cardetail.repository.ClienteRepository;
 import br.com.cardetail.validator.ClienteExcludeValidator;
 import br.com.cardetail.validator.ClienteValidator;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ClienteService extends BaseService<Cliente, UUID> {
 
+    private final ClienteRepository repository;
     private final ClienteValidator validator;
     private final ClienteExcludeValidator excludeValidator;
     private final ClienteMapper mapper;
@@ -45,13 +47,7 @@ public class ClienteService extends BaseService<Cliente, UUID> {
         return new PageImpl<>(dtoList, pageable, clientes.getTotalElements());
     }
 
-    public Page<VeiculoClienteDTO> getVeiculosList(final String search, final Pageable pageable) {
-        final Page<Cliente> clientes = findAll(
-                createSpecification(Optional.empty(), buildRsqlFilter(search)), pageable);
-
-        final List<VeiculoClienteDTO> dtoList = mapper.toVeiculoClienteDtoList(clientes.getContent());
-
-        return new PageImpl<>(dtoList, pageable, clientes.getTotalElements());
+    public List<ClienteAutocompleteDTO> findToAutocomplete(final String search) {
+        return repository.findToAutocomplete(search, Pageable.ofSize(15));
     }
-
 }

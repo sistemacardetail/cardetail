@@ -76,8 +76,10 @@ function AgendamentoEditForm({ initialValues, tabValue, onTabChange }: Agendamen
         errors,
         setErrors,
         isDirty,
+        cliente,
         handleChange,
         handlePeriodoChange,
+        handleClienteChange,
         handleVeiculoChange,
         handlePacoteChange,
         handleAddServico,
@@ -298,6 +300,8 @@ function AgendamentoEditForm({ initialValues, tabValue, onTabChange }: Agendamen
                         values={values}
                         onChange={handleChange}
                         onPeriodoChange={handlePeriodoChange}
+                        cliente={cliente}
+                        onClienteChange={handleClienteChange}
                         onVeiculoChange={handleVeiculoChange}
                         onPacoteChange={handlePacoteChange}
                         onAddServico={handleAddServico}
