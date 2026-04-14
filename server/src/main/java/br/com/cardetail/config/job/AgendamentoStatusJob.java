@@ -17,16 +17,11 @@ public class AgendamentoStatusJob {
     @Scheduled(fixedRateString = "${app.job.agendamento-status.interval-ms:300000}")
     public void updateAgendamentoStatus() {
         try {
-            int updateConfirmed = statusService.updateIfExistsConfirmedToInProgress();
-            int updatedInProgress = statusService.updateIfExistsInProgressToCompleted();
-            int updateToCompleted = statusService.updateIfExistsConfirmedToCompleted();
-
-            int total = updateConfirmed + updatedInProgress + updateToCompleted;
-
-            if (total > 0) {
-                log.debug("Update status: {} CONFIRMADO > EM_ANDAMENTO, {} EM_ANDAMENTO > CONCLUIDO, {} CONFIRMADO > CONCLUIDO",
-                        updateConfirmed, updatedInProgress, updateToCompleted);
+            if (!statusService.hasAgendamentosPendentesDeAtualizacao()) {
+                return;
             }
+
+            statusService.updateAllStatus();
         } catch (Exception e) {
             log.error("Erro ao atualizar status dos agendamentos", e);
         }
