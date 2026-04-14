@@ -29,6 +29,7 @@ import {
 import { formatCurrency, formatDuration } from '../utils';
 import MoneyInput from '../components/MoneyInput';
 import SectionHeader from '../components/SectionHeader';
+import ClienteAutocomplete, { ClienteAutocompleteDTO } from '../components/ClienteAutocomplete';
 import VeiculoAutocomplete from '../components/VeiculoAutocomplete';
 import StatusChip from '../components/StatusChip';
 import ConfirmDeleteDialog from '../components/ConfirmDeleteDialog';
@@ -38,7 +39,9 @@ import { searchServicosTerceirizadosAgendamento } from '../servicos-terceirizado
 export interface OrcamentoFormFieldsProps {
     values: Partial<OrcamentoDTO>;
     onChange: (field: keyof OrcamentoDTO, value: any) => void;
-    onVeiculoChange: (veiculo: VeiculoDTO | null) => void;
+    cliente: ClienteAutocompleteDTO | null;
+    onClienteChange: (cliente: ClienteAutocompleteDTO | null) => void;
+    onVeiculoChange: (veiculo: VeiculoDTO | null, clienteData?: ClienteAutocompleteDTO) => void;
     onPacoteChange: (pacote: PacoteDTO | null) => void;
     onAddServico: () => void;
     onRemoveServico: (index: number) => void;
@@ -68,6 +71,8 @@ const cardStyles = {
 export default function OrcamentoFormFields({
     values,
     onChange,
+    cliente,
+    onClienteChange,
     onVeiculoChange,
     onPacoteChange,
     onAddServico,
@@ -268,18 +273,27 @@ export default function OrcamentoFormFields({
 
                         <Grid size={8} />
 
-                        <Grid size={8}>
-                            <VeiculoAutocomplete
-                                value={values.veiculo}
-                                onChange={onVeiculoChange}
-                                error={errors.veiculo}
+                        <Grid size={4}>
+                            <ClienteAutocomplete
+                                value={cliente}
+                                onChange={onClienteChange}
+                                error={errors.cliente}
                                 disabled={isReadOnly || !!values.id}
                                 required
                                 showAddButton={!isReadOnly && !values.id}
                             />
                         </Grid>
 
-                        <Grid size={4} />
+                        <Grid size={4}>
+                            <VeiculoAutocomplete
+                                value={values.veiculo}
+                                clienteId={cliente?.id}
+                                onChange={onVeiculoChange}
+                                error={errors.veiculo}
+                                disabled={isReadOnly || !!values.id}
+                                required
+                            />
+                        </Grid>
 
                         <Grid size={8}>
                             <TextField

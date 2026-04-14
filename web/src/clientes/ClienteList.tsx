@@ -15,7 +15,7 @@ const columns: GridColDef[] = [
     },
     {
         field: 'telefonePrincipal',
-        headerName: 'Telefone',
+        headerName: 'Telefone Principal',
         width: 200,
         sortable: false,
     },
@@ -94,7 +94,7 @@ const columnsToFilter: FilterableField[] = [
         headerName: 'Placa',
     },
     {
-        field: 'telefones.numero',
+        field: 'telefones.telefone.numero',
         headerName: 'Telefone',
     },
     {

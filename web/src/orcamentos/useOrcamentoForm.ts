@@ -3,6 +3,14 @@ import { normalizeOrcamentoForForm, OrcamentoDTO } from './OrcamentoService';
 import { ServicoSelecionavelDTO } from '../servicos';
 import { VeiculoDTO } from '../clientes/ClienteService';
 import { PacoteDTO } from '../pacotes';
+import { ClienteAutocompleteDTO } from '../components/ClienteAutocomplete';
+import { searchVeiculosAutocomplete, VeiculoAutoCompleteDTO } from '../components/VeiculoAutocomplete';
+import {
+    clienteDTOToAutocomplete,
+    fetchClienteAutocompleteById,
+    resetValoresPorVeiculo,
+    veiculoToClienteAutocomplete,
+} from '../shared/clienteVeiculoFormUtils';
 
 const INITIAL_VALUES: Partial<OrcamentoDTO> = {
     veiculo: undefined,
@@ -24,12 +32,48 @@ export function useOrcamentoForm(initialValues?: Partial<OrcamentoDTO>) {
     const [errors, setErrors] = React.useState<Record<string, string>>({});
     const [isDirty, setIsDirty] = React.useState(false);
 
+    const resolveClienteFromInitial = React.useCallback((values?: Partial<OrcamentoDTO>) => {
+        if (values?.cliente?.id) {
+            return clienteDTOToAutocomplete(values.cliente);
+        }
+        const veiculo = values?.veiculo as VeiculoAutoCompleteDTO | undefined;
+        return veiculoToClienteAutocomplete(veiculo);
+    }, []);
+
+    // Estado do cliente separado para o autocomplete
+    const [cliente, setCliente] = React.useState<ClienteAutocompleteDTO | null>(() =>
+        resolveClienteFromInitial(initialValues)
+    );
+    const fetchedClienteRef = React.useRef(new Set<string>());
+
     React.useEffect(() => {
         if (initialValues) {
             setValues(normalizeOrcamentoForForm(initialValues));
             setIsDirty(false);
+
+            setCliente(resolveClienteFromInitial(initialValues));
         }
-    }, [initialValues]);
+    }, [initialValues, resolveClienteFromInitial]);
+
+    React.useEffect(() => {
+        if (!cliente?.id || cliente.telefonePrincipal || fetchedClienteRef.current.has(cliente.id)) {
+            return;
+        }
+        fetchedClienteRef.current.add(cliente.id);
+        fetchClienteAutocompleteById(cliente.id)
+            .then((clienteCompleto) => {
+                if (clienteCompleto?.id) {
+                    setCliente((prev) =>
+                        prev?.id === clienteCompleto.id
+                            ? { ...prev, ...clienteCompleto }
+                            : clienteCompleto
+                    );
+                }
+            })
+            .catch((error) => {
+                console.error('Erro ao buscar dados completos do cliente:', error);
+            });
+    }, [cliente?.id, cliente?.telefonePrincipal]);
 
     const hasTerceirizadoInServicos = React.useMemo(
         () => (values.servicos || []).some((s) => s.tipoServico === 'TERCEIRIZADO' || !!s.servicoTerceirizado),
@@ -77,18 +121,82 @@ export function useOrcamentoForm(initialValues?: Partial<OrcamentoDTO>) {
         setIsDirty(true);
     }, []);
 
-    const handleVeiculoChange = React.useCallback((veiculo: VeiculoDTO | null) => {
+    const handleClienteChange = React.useCallback(async (novoCliente: ClienteAutocompleteDTO | null) => {
+        setCliente(novoCliente);
+        setErrors((prev) => ({ ...prev, cliente: '' }));
+        setIsDirty(true);
+
+        // Se o veículo atual não pertence ao novo cliente, limpa o veículo
+        const veiculoAtual = values.veiculo as VeiculoAutoCompleteDTO | undefined;
+        if (veiculoAtual && novoCliente && veiculoAtual.clienteId !== novoCliente.id) {
+            setValues((prev) => ({
+                ...resetValoresPorVeiculo(prev),
+                veiculo: undefined,
+            }));
+        }
+
+        if (novoCliente?.id) {
+            try {
+                const { data: veiculos } = await searchVeiculosAutocomplete('', novoCliente.id);
+                if (veiculos?.length === 1) {
+                    const unicoVeiculo = veiculos[0];
+                    const veiculoDTO: VeiculoAutoCompleteDTO = {
+                        id: unicoVeiculo.id,
+                        placa: unicoVeiculo.placa,
+                        modelo: {
+                            id: '',
+                            nome: unicoVeiculo.modelo,
+                            marca: { id: '', nome: unicoVeiculo.marca },
+                            tipo: { id: unicoVeiculo.idTipo, descricao: '' },
+                        },
+                        cor: { id: '', nome: unicoVeiculo.cor },
+                        observacao: unicoVeiculo.observacao,
+                        semPlaca: !unicoVeiculo.placa,
+                        clienteId: unicoVeiculo.idCliente,
+                    };
+                    setValues((prev) => ({
+                        ...resetValoresPorVeiculo(prev),
+                        veiculo: veiculoDTO as VeiculoDTO,
+                    }));
+                }
+            } catch (error) {
+                console.error('Erro ao buscar veículos do cliente:', error);
+            }
+        }
+    }, [values.veiculo]);
+
+    const handleVeiculoChange = React.useCallback((veiculo: VeiculoDTO | null, clienteData?: ClienteAutocompleteDTO) => {
         setValues((prev) => ({
-            ...prev,
+            ...resetValoresPorVeiculo(prev),
             veiculo: veiculo as VeiculoDTO | undefined,
-            pacote: undefined,
-            servicos: [],
-            servicosTerceirizados: [],
-            valor: 0,
         }));
         setErrors((prev) => ({ ...prev, veiculo: '' }));
         setIsDirty(true);
-    }, []);
+
+        // Ao selecionar veículo, sincroniza o cliente
+        const veiculoComCliente = veiculo as VeiculoAutoCompleteDTO | null;
+        if (veiculoComCliente?.clienteId) {
+            const nextCliente = veiculoToClienteAutocomplete(veiculoComCliente, clienteData);
+            if (nextCliente && cliente?.id !== nextCliente.id) {
+                setCliente(nextCliente);
+                setErrors((prev) => ({ ...prev, cliente: '' }));
+            }
+            const shouldFetchCliente =
+                !cliente?.id && !clienteData?.nome && !veiculoComCliente.clienteNome;
+            if (shouldFetchCliente) {
+                fetchClienteAutocompleteById(veiculoComCliente.clienteId)
+                    .then((clienteCompleto) => {
+                        if (clienteCompleto?.id) {
+                            setCliente(clienteCompleto);
+                            setErrors((prev) => ({ ...prev, cliente: '' }));
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Erro ao buscar cliente do veículo:', error);
+                    });
+            }
+        }
+    }, [cliente]);
 
     const handlePacoteChange = React.useCallback((pacote: PacoteDTO | null) => {
         setValues((prev) => ({
@@ -155,7 +263,8 @@ export function useOrcamentoForm(initialValues?: Partial<OrcamentoDTO>) {
         setValues(initialValues ? normalizeOrcamentoForForm(initialValues) : INITIAL_VALUES);
         setErrors({});
         setIsDirty(false);
-    }, [initialValues]);
+        setCliente(resolveClienteFromInitial(initialValues));
+    }, [initialValues, resolveClienteFromInitial]);
 
     const clearDirty = React.useCallback(() => {
         setIsDirty(false);
@@ -209,7 +318,9 @@ export function useOrcamentoForm(initialValues?: Partial<OrcamentoDTO>) {
         setErrors,
         isDirty,
         clearDirty,
+        cliente,
         handleChange,
+        handleClienteChange,
         handleVeiculoChange,
         handlePacoteChange,
         handleAddServico,

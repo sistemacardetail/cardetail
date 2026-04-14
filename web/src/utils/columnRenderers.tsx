@@ -1,12 +1,66 @@
 import React from 'react';
-import { Box, Chip } from '@mui/material';
+import { Box, Chip, Typography } from '@mui/material';
 import { GridRenderCellParams } from '@mui/x-data-grid';
 import { formatCurrency, formatDate, formatDateTime } from './formatters';
+
+const getTelefoneLabel = (row: any): string | null => {
+    const rawTelefone =
+        row?.clienteTelefone
+        ?? row?.cliente?.telefonePrincipal
+        ?? row?.cliente?.telefoneContato
+        ?? row?.telefoneContato
+        ?? row?.telefonePrincipal;
+
+    if (rawTelefone && typeof rawTelefone === 'string') {
+        return rawTelefone;
+    }
+
+    const telefones = row?.cliente?.telefones;
+    if (Array.isArray(telefones) && telefones.length > 0) {
+        const principal = telefones.find((t: any) => t?.principal) ?? telefones[0];
+        const telefone = principal?.telefone ?? principal;
+        const ddd = telefone?.ddd;
+        const numero = telefone?.numero;
+        if (numero) {
+            return ddd ? `(${ddd}) ${numero}` : numero;
+        }
+    }
+
+    return null;
+};
+
+export const renderClienteCell = (params: GridRenderCellParams) => {
+    const row = params.row as any;
+    const nome = params.value ?? row?.clienteNome ?? row?.cliente?.nome ?? '-';
+    const telefone = getTelefoneLabel(row);
+
+    return (
+        <Box sx={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+            <Typography variant="body2" fontWeight={500}>
+                {nome || '-'}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+                {telefone || '-'}
+            </Typography>
+        </Box>
+    );
+};
 
 export const renderVeiculoCell = (params: GridRenderCellParams) => {
     const veiculo = params.value;
     if (!veiculo) return '-';
-    return `${veiculo.modelo?.marca?.nome} ${veiculo.modelo?.nome} [${veiculo?.placa ?? 'sem placa'}]`;
+    const descricao = `${veiculo.modelo?.marca?.nome ?? ''} ${veiculo.modelo?.nome ?? ''} ${veiculo.cor?.nome ?? ''}`.trim();
+    const placa = veiculo?.placa || 'Sem placa';
+    return (
+        <Box sx={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+            <Typography variant="body2" fontWeight={500}>
+                {descricao || '-'}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+                {placa}
+            </Typography>
+        </Box>
+    );
 };
 
 export const renderPacoteCell = (params: GridRenderCellParams) => {

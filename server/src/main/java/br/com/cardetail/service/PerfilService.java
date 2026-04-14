@@ -30,7 +30,6 @@ public class PerfilService {
     private final PermissaoRepository permissaoRepository;
     private final UsuarioRepository usuarioRepository;
     private final SecurityContext securityContext;
-    private final AuditoriaService auditoriaService;
 
     public List<PerfilDTO> listarTodos() {
         return repository.findAllByOrderByNivelAsc().stream()

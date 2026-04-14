@@ -19,12 +19,12 @@ import {
     Typography,
 } from '@mui/material';
 import {
+    AccountCircle,
     Add as AddIcon,
     Block as BlockIcon,
     CheckCircle as CheckCircleIcon,
     Delete as DeleteIcon,
     Edit as EditIcon,
-    Person as PersonIcon,
     Search as SearchIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -160,7 +160,7 @@ export default function UsuarioList() {
         <PageContainer
             title="Usuários"
             description="Gerenciamento de usuários do sistema"
-            icon={<PersonIcon />}
+            icon={<AccountCircle />}
             actions={headerActions}
         >
             <Card

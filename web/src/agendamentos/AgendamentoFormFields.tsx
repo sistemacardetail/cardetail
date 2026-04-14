@@ -16,6 +16,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import SectionHeader from '../components/SectionHeader';
+import ClienteAutocomplete, { ClienteAutocompleteDTO } from '../components/ClienteAutocomplete';
 import VeiculoAutocomplete from '../components/VeiculoAutocomplete';
 import StatusChip from '../components/StatusChip';
 import { formatCurrency, formatDuration } from '../utils';
@@ -43,7 +44,9 @@ export interface AgendamentoFormFieldsProps {
     values: Partial<AgendamentoDTO>;
     onChange: (field: keyof AgendamentoDTO, value: any) => void;
     onPeriodoChange?: (inicio: string | null, fim: string | null) => void;
-    onVeiculoChange: (veiculo: VeiculoDTO | null) => void;
+    cliente: ClienteAutocompleteDTO | null;
+    onClienteChange: (cliente: ClienteAutocompleteDTO | null) => void;
+    onVeiculoChange: (veiculo: VeiculoDTO | null, clienteData?: ClienteAutocompleteDTO) => void;
     onPacoteChange: (pacote: PacoteDTO | null) => void;
     onAddServico: () => void;
     onRemoveServico: (index: number) => void;
@@ -53,7 +56,6 @@ export interface AgendamentoFormFieldsProps {
     valorFinal: number;
     tempoEstimadoTotal: number;
     errors?: Record<string, string>;
-    initialClienteId?: string;
     agendamentoId?: string; // para excluir o próprio agendamento da timeline ao editar
 }
 
@@ -91,6 +93,8 @@ export default function AgendamentoFormFields({
     values,
     onChange,
     onPeriodoChange,
+    cliente,
+    onClienteChange,
     onVeiculoChange,
     onPacoteChange,
     onAddServico,
@@ -323,18 +327,29 @@ export default function AgendamentoFormFields({
                             </Grid>
                         )}
 
-                        <Grid size={8}>
-                            <VeiculoAutocomplete
-                                value={values.veiculo}
-                                onChange={onVeiculoChange}
-                                error={errors.veiculo}
+                        <Grid size={4}/>
+
+                        <Grid size={4}>
+                            <ClienteAutocomplete
+                                value={cliente}
+                                onChange={onClienteChange}
+                                error={errors.cliente}
                                 disabled={isReadOnly || !!values.id}
                                 required
                                 showAddButton={!isReadOnly && !values.id}
                             />
                         </Grid>
 
-                        <Grid size={4} />
+                        <Grid size={4}>
+                            <VeiculoAutocomplete
+                                value={values.veiculo}
+                                clienteId={cliente?.id}
+                                onChange={onVeiculoChange}
+                                error={errors.veiculo}
+                                disabled={isReadOnly || !!values.id}
+                                required
+                            />
+                        </Grid>
 
                         <Grid size={8}>
                             <TextField

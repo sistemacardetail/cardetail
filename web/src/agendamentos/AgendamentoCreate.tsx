@@ -66,8 +66,10 @@ export default function AgendamentoCreate() {
         errors,
         setErrors,
         isDirty,
+        cliente,
         handleChange,
         handlePeriodoChange,
+        handleClienteChange,
         handleVeiculoChange,
         handlePacoteChange,
         handleAddServico,
@@ -143,6 +145,8 @@ export default function AgendamentoCreate() {
                     values={values}
                     onChange={handleChange}
                     onPeriodoChange={handlePeriodoChange}
+                    cliente={cliente}
+                    onClienteChange={handleClienteChange}
                     onVeiculoChange={handleVeiculoChange}
                     onPacoteChange={handlePacoteChange}
                     onAddServico={handleAddServico}

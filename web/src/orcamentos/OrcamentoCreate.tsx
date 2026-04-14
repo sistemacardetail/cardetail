@@ -21,7 +21,9 @@ export default function OrcamentoCreate() {
         errors,
         setErrors,
         isDirty,
+        cliente,
         handleChange,
+        handleClienteChange,
         handleVeiculoChange,
         handlePacoteChange,
         handleAddServico,
@@ -86,6 +88,8 @@ export default function OrcamentoCreate() {
                 <OrcamentoFormFields
                     values={values}
                     onChange={handleChange}
+                    cliente={cliente}
+                    onClienteChange={handleClienteChange}
                     onVeiculoChange={handleVeiculoChange}
                     onPacoteChange={handlePacoteChange}
                     onAddServico={handleAddServico}

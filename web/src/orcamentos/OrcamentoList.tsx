@@ -4,6 +4,7 @@ import StatusChip from '../components/StatusChip';
 import { deleteOrcamento, downloadOrcamentoPdf, OrcamentoListDTO, searchOrcamentos } from './OrcamentoService';
 import {
     orcamentoStatusConfig,
+    renderClienteCell,
     renderCurrencyCell,
     renderPacoteCell,
     renderServicosCell,
@@ -31,7 +32,7 @@ const columns: GridColDef[] = [
         headerName: 'Cliente',
         width: 200,
         sortable: false,
-        renderCell: (params) => params.value || '-',
+        renderCell: renderClienteCell,
     },
     {
         field: 'veiculo',

@@ -2,8 +2,6 @@ package br.com.cardetail.service;
 
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -33,15 +31,12 @@ import br.com.cardetail.core.exception.RestException;
 import br.com.cardetail.domain.Cliente;
 import br.com.cardetail.domain.Orcamento;
 import br.com.cardetail.domain.PacoteServico;
-import br.com.cardetail.dto.OrcamentoPdfDTO;
-import br.com.cardetail.dto.OrcamentoPdfDTO.ServicoItemDTO;
 import br.com.cardetail.dto.configuracao.EmpresaDTO;
 import br.com.cardetail.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Slf4j
@@ -52,9 +47,6 @@ public class OrcamentoPdfService {
     private final ClienteRepository clienteRepository;
     private final EmpresaService empresaService;
 
-    /**
-     * Gera o PDF do orçamento.
-     */
     public byte[] gerarPdf(Orcamento orcamento) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -66,22 +58,16 @@ public class OrcamentoPdfService {
             PdfFont fontBold = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
             PdfFont fontRegular = PdfFontFactory.createFont(StandardFonts.HELVETICA);
 
-            // Cabeçalho
             adicionarCabecalho(document, fontBold, fontRegular);
 
-            // Informações do orçamento
             adicionarInfoOrcamento(document, orcamento, fontBold);
 
-            // Informações do cliente/veículo
             adicionarInfoCliente(document, orcamento, fontBold, fontRegular);
 
-            // Pacote e serviços
             adicionarServicos(document, orcamento, fontBold, fontRegular);
 
-            // Valores
             adicionarValores(document, orcamento, fontBold, fontRegular);
 
-            // Observações
             if (orcamento.getObservacao() != null && !orcamento.getObservacao().isEmpty()) {
                 adicionarObservacoes(document, orcamento, fontBold, fontRegular);
             }
@@ -93,81 +79,6 @@ public class OrcamentoPdfService {
             log.error("Erro ao gerar PDF do orçamento: {}", e.getMessage(), e);
             throw new RestException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao gerar PDF do orçamento");
         }
-    }
-
-    /**
-     * Monta os dados do orçamento para preview no frontend.
-     */
-    public OrcamentoPdfDTO montarDadosPdf(Orcamento orcamento) {
-        // Buscar cliente
-        String clienteNome = "";
-        String clienteTelefone = "";
-
-        if (orcamento.getVeiculo() != null) {
-            Cliente cliente = clienteRepository.findByVeiculoId(orcamento.getVeiculo().getId()).orElse(null);
-            if (cliente != null) {
-                clienteNome = cliente.getNome();
-                if (cliente.getTelefones() != null && !cliente.getTelefones().isEmpty()) {
-                    clienteTelefone = cliente.getTelefones().getFirst().getNumero();
-                }
-            }
-        }
-
-        // Serviços do pacote
-        List<ServicoItemDTO> servicosPacote = new ArrayList<>();
-        if (orcamento.getPacote().getServicos() != null) {
-            for (PacoteServico ps : orcamento.getPacote().getServicos()) {
-                servicosPacote.add(ServicoItemDTO.builder()
-                        .nome(ps.getServico().getNome())
-                        .descricao(ps.getServico().getDescricao())
-                        .valor(ps.getServico().getValor())
-                        .build());
-            }
-        }
-
-        // Serviços adicionais
-        List<ServicoItemDTO> servicosAdicionais = orcamento.getServicos()
-                .stream()
-                .map(sa -> ServicoItemDTO.builder()
-                        .nome(sa.getServico().getNome())
-                        .descricao(sa.getServico().getDescricao())
-                        .valor(sa.getValor())
-                        .build())
-                .toList();
-
-        // Descrição do veículo
-        String veiculoDescricao = null;
-        String veiculoPlaca = null;
-        if (orcamento.getVeiculo() != null) {
-            veiculoDescricao = orcamento.getVeiculo().getModelo().getMarca().getNome() + " " +
-                              orcamento.getVeiculo().getModelo().getNome();
-            veiculoPlaca = orcamento.getVeiculo().getPlacaFormatted();
-        }
-
-        final EmpresaDTO empresa = empresaService.buscar();
-
-        return OrcamentoPdfDTO.builder()
-                .empresaNome(nonNull(empresa) ? empresa.nomeFantasia() : EMPTY)
-                .empresaEndereco(nonNull(empresa) ?empresa.enderecoCompleto() : EMPTY)
-                .empresaTelefone(nonNull(empresa) ?empresa.telefone() : EMPTY)
-                .empresaCnpj(nonNull(empresa) ? empresa.cnpjFormatado() : EMPTY)
-                .numero(orcamento.getNumero())
-                .dataCriacao(orcamento.getDataCriacao())
-                .status(orcamento.getStatus().name())
-                .clienteNome(clienteNome)
-                .clienteTelefone(clienteTelefone)
-                .veiculoDescricao(veiculoDescricao)
-                .veiculoPlaca(veiculoPlaca)
-                .pacoteNome(orcamento.getPacote().getNome())
-                .pacoteDescricao(orcamento.getPacote().getDescricao())
-                .pacoteValor(orcamento.getValorPacote())
-                .servicosPacote(servicosPacote)
-                .servicosAdicionais(servicosAdicionais)
-                .valorTotal(orcamento.getValor())
-                .valorDesconto(orcamento.getValorDesconto())
-                .valorFinal(orcamento.getValorFinal())
-                .observacao(orcamento.getObservacao())
-                .build();
     }
 
     private void adicionarCabecalho(Document document, PdfFont fontBold, PdfFont fontRegular) {
@@ -229,14 +140,12 @@ public class OrcamentoPdfService {
 
     private void adicionarInfoOrcamento(Document document, Orcamento orcamento,
                                          PdfFont fontBold) {
-        // Título
         document.add(new Paragraph(String.format("ORÇAMENTO %06d", orcamento.getNumero()))
                 .setFont(fontBold)
                 .setFontSize(16)
                 .setTextAlignment(TextAlignment.CENTER)
                 .setMarginBottom(10));
 
-        // Informações em tabela
         Table table = new Table(UnitValue.createPercentArray(new float[]{1, 1}))
                 .useAllAvailableWidth()
                 .setMarginBottom(15);
@@ -336,15 +245,15 @@ public class OrcamentoPdfService {
             }
         }
 
-        if (!orcamento.getServicos().isEmpty()) {
+        if (nonNull(orcamento.getPacote()) && (!orcamento.getServicos().isEmpty() || !orcamento.getServicosTerceirizados().isEmpty())) {
+            document.add(new Paragraph("Serviços Adicionais")
+                    .setFont(fontBold)
+                    .setFontSize(11)
+                    .setMarginTop(10)
+                    .setMarginBottom(5));
+        }
 
-            if (nonNull(orcamento.getPacote())) {
-                document.add(new Paragraph("Serviços Adicionais")
-                        .setFont(fontBold)
-                        .setFontSize(11)
-                        .setMarginTop(10)
-                        .setMarginBottom(5));
-            }
+        if (!orcamento.getServicos().isEmpty()) {
 
             Table adicionaisTable = new Table(UnitValue.createPercentArray(new float[]{4, 1}))
                     .useAllAvailableWidth()
@@ -371,6 +280,35 @@ public class OrcamentoPdfService {
             }
 
             document.add(adicionaisTable);
+        }
+
+        if (!orcamento.getServicosTerceirizados().isEmpty()) {
+
+            Table terceirizadosTable = new Table(UnitValue.createPercentArray(new float[]{4, 1}))
+                    .useAllAvailableWidth()
+                    .setMarginBottom(5);
+
+            for (var sa : orcamento.getServicosTerceirizados()) {
+
+                terceirizadosTable.addCell(new Cell()
+                        .add(new Paragraph("• " + sa.getServico().getNome())
+                                .setFont(fontRegular)
+                                .setFontSize(10))
+                        .setBorder(Border.NO_BORDER)
+                        .setPaddingTop(3)
+                        .setPaddingBottom(3));
+
+                terceirizadosTable.addCell(new Cell()
+                        .add(new Paragraph(formatarValor(sa.getValor()))
+                                .setFont(fontRegular)
+                                .setFontSize(10))
+                        .setTextAlignment(TextAlignment.RIGHT)
+                        .setBorder(Border.NO_BORDER)
+                        .setPaddingTop(3)
+                        .setPaddingBottom(3));
+            }
+
+            document.add(terceirizadosTable);
         }
     }
 
@@ -404,7 +342,6 @@ public class OrcamentoPdfService {
                     .setFontColor(new DeviceRgb(0, 128, 0)));
         }
 
-        // Total
         table.addCell(new Cell()
                 .add(new Paragraph("TOTAL:").setFont(fontBold).setFontSize(12))
                 .setBorder(Border.NO_BORDER)

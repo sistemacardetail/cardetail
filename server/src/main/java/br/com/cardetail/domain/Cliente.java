@@ -9,7 +9,6 @@ import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.com.cardetail.core.domain.BaseDomain;
 import jakarta.persistence.CascadeType;
@@ -62,7 +61,6 @@ public class Cliente  implements BaseDomain<UUID> {
         return !telefones.isEmpty();
     }
 
-    @JsonIgnore
     public String getTelefonePrincipal() {
         return telefones
                 .stream()

@@ -1,20 +1,31 @@
 import React from 'react';
-import { Autocomplete, Box, IconButton, TextField, Tooltip, Typography } from '@mui/material';
+import { Autocomplete, Box, TextField, Typography } from '@mui/material';
 import { alpha } from '@mui/material/styles';
-import AddIcon from '@mui/icons-material/Add';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { searchVeiculosComCliente, VeiculoClienteDTO } from '../agendamentos';
+import { useSearchParams } from 'react-router-dom';
 import { VeiculoDTO } from '../clientes/ClienteService';
 import { useDebounce } from '../hooks/useDebounce';
 import { CorVeiculoDTO, ModeloVeiculoDTO } from '../cadastros';
+import { apiGet } from '../services/apiService';
+import { ClienteAutocompleteDTO } from './ClienteAutocomplete';
 
 export interface VeiculoAutocompleteProps {
     value: VeiculoDTO | null | undefined;
-    onChange: (veiculo: VeiculoDTO | null) => void;
+    onChange: (veiculo: VeiculoDTO | null, clienteData?: ClienteAutocompleteDTO) => void;
+    clienteId?: string;
     error?: string;
     disabled?: boolean;
     required?: boolean;
-    showAddButton?: boolean;
+}
+
+export interface VeiculoAutocompleteResponseDTO {
+    id: string;
+    modelo: string;
+    marca: string;
+    cor: string;
+    placa: string;
+    idTipo: string;
+    idCliente: string;
+    observacao?: string;
 }
 
 export interface VeiculoAutoCompleteDTO {
@@ -25,34 +36,49 @@ export interface VeiculoAutoCompleteDTO {
     observacao?: string;
     semPlaca: boolean;
     clienteId: string;
-    clienteNome: string;
+    clienteNome?: string;
     clienteObservacao?: string;
     clienteTelefone?: string;
 }
 
+export const searchVeiculosAutocomplete = async (
+    search: string = '',
+    clienteId?: string
+): Promise<{ data?: VeiculoAutocompleteResponseDTO[]; error?: string }> => {
+    const searchTerm = search ? `%${search}%` : '%';
+    const params = new URLSearchParams({ search: searchTerm });
+    if (clienteId) {
+        params.append('idCliente', clienteId);
+    }
+
+    return apiGet<VeiculoAutocompleteResponseDTO[]>(
+        `/api/veiculos/autocomplete?${params}`,
+        'Erro ao buscar veículos'
+    );
+};
+
 export default function VeiculoAutocomplete({
     value,
     onChange,
+    clienteId,
     error,
     disabled,
     required = false,
-    showAddButton = false,
 }: Readonly<VeiculoAutocompleteProps>) {
-    const navigate = useNavigate();
-    const location = useLocation();
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const [veiculos, setVeiculos] = React.useState<VeiculoClienteDTO[]>([]);
+    const [veiculos, setVeiculos] = React.useState<VeiculoAutocompleteResponseDTO[]>([]);
     const [loadingVeiculos, setLoadingVeiculos] = React.useState(false);
-    const [selectedVeiculoComCliente, setSelectedVeiculoComCliente] = React.useState<VeiculoClienteDTO | null>(null);
+    const [selectedVeiculo, setSelectedVeiculo] = React.useState<VeiculoAutocompleteResponseDTO | null>(null);
     const [initialLoadDone, setInitialLoadDone] = React.useState(false);
     const searchRequestIdRef = React.useRef(0);
+    const lastClienteIdRef = React.useRef<string | undefined>(undefined);
 
-    const searchVeiculos = React.useCallback(async (searchText: string) => {
+    const searchVeiculos = React.useCallback(async (searchText: string, forClienteId?: string) => {
         const requestId = ++searchRequestIdRef.current;
         setLoadingVeiculos(true);
         try {
-            const { data } = await searchVeiculosComCliente(searchText);
+            const { data } = await searchVeiculosAutocomplete(searchText, forClienteId);
             if (requestId !== searchRequestIdRef.current) {
                 return [];
             }
@@ -69,41 +95,41 @@ export default function VeiculoAutocomplete({
         }
     }, []);
 
-    const handleSearchVeiculos = useDebounce(searchVeiculos, 300);
+    const handleSearchVeiculos = useDebounce((searchText: string) => {
+        searchVeiculos(searchText, clienteId);
+    }, 300);
 
     const veiculoIdFromUrl = searchParams.get('veiculoId');
 
+    // Reseta quando clienteId muda
+    React.useEffect(() => {
+        if (lastClienteIdRef.current !== clienteId) {
+            lastClienteIdRef.current = clienteId;
+            setVeiculos([]);
+            // Recarrega com o novo clienteId
+            searchVeiculos('', clienteId);
+        }
+    }, [clienteId, searchVeiculos]);
+
+    // Carrega inicial e sincroniza valor da URL
     React.useEffect(() => {
         const loadInitialData = async () => {
             if (initialLoadDone) return;
 
-            const veiculosData = await searchVeiculos('');
+            const veiculosData = await searchVeiculos('', clienteId);
 
             const targetVeiculoId = veiculoIdFromUrl || value?.id;
 
             if (targetVeiculoId && veiculosData.length > 0) {
                 const veiculoEncontrado = veiculosData.find(v => v.id === targetVeiculoId);
                 if (veiculoEncontrado) {
-                    setSelectedVeiculoComCliente(veiculoEncontrado);
+                    setSelectedVeiculo(veiculoEncontrado);
                     if (veiculoIdFromUrl) {
-                        const veiculo: VeiculoAutoCompleteDTO = {
-                            id: veiculoEncontrado.id,
-                            placa: veiculoEncontrado.placa,
-                            modelo: {
-                                id: '',
-                                nome: veiculoEncontrado.modelo,
-                                marca: { id: '', nome: veiculoEncontrado.marca },
-                                tipo: { id: veiculoEncontrado.idTipo, descricao: veiculoEncontrado.tipo },
-                            },
-                            cor: { id: '', nome: veiculoEncontrado.cor },
-                            observacao: veiculoEncontrado.observacao,
-                            semPlaca: veiculoEncontrado.placa !== '',
-                            clienteId: veiculoEncontrado.clienteId,
-                            clienteNome: veiculoEncontrado.clienteNome,
-                            clienteObservacao: veiculoEncontrado.clienteObservacao,
-                            clienteTelefone: veiculoEncontrado.clienteTelefone,
-                        };
-                        onChange(veiculo);
+                        const veiculo = mapToVeiculoDTO(veiculoEncontrado);
+                        onChange(veiculo, {
+                            id: veiculoEncontrado.idCliente,
+                            nome: '',
+                        });
                         const newSearchParams = new URLSearchParams(searchParams);
                         newSearchParams.delete('veiculoId');
                         setSearchParams(newSearchParams, { replace: true });
@@ -115,135 +141,90 @@ export default function VeiculoAutocomplete({
         };
 
         loadInitialData();
-    }, [searchVeiculos, value?.id, initialLoadDone, veiculoIdFromUrl, onChange, searchParams, setSearchParams]);
+    }, [searchVeiculos, value?.id, initialLoadDone, veiculoIdFromUrl, onChange, searchParams, setSearchParams, clienteId]);
 
-    const handleAddCliente = () => {
-        const currentUrl = location.pathname + location.search;
-        navigate('/app/clientes/novo', {
-            state: {
-                from: currentUrl,
-                returnWithVeiculo: true,
-            },
-        });
-    };
+    // Sincroniza selectedVeiculo quando value muda externamente
+    React.useEffect(() => {
+        if (value?.id && !selectedVeiculo) {
+            const veiculoEncontrado = veiculos.find(v => v.id === value.id);
+            if (veiculoEncontrado) {
+                setSelectedVeiculo(veiculoEncontrado);
+            }
+        } else if (!value && selectedVeiculo) {
+            setSelectedVeiculo(null);
+        }
+    }, [value, veiculos, selectedVeiculo]);
 
-    const handleVeiculoSelect = (_: any, veiculoComCliente: VeiculoClienteDTO | null) => {
-        setSelectedVeiculoComCliente(veiculoComCliente);
-        if (!veiculoComCliente) {
+    const mapToVeiculoDTO = (veiculoResponse: VeiculoAutocompleteResponseDTO): VeiculoAutoCompleteDTO => ({
+        id: veiculoResponse.id,
+        placa: veiculoResponse.placa,
+        modelo: {
+            id: '',
+            nome: veiculoResponse.modelo,
+            marca: { id: '', nome: veiculoResponse.marca },
+            tipo: { id: veiculoResponse.idTipo, descricao: '' },
+        },
+        cor: { id: '', nome: veiculoResponse.cor },
+        observacao: veiculoResponse.observacao,
+        semPlaca: !veiculoResponse.placa,
+        clienteId: veiculoResponse.idCliente,
+    });
+
+    const handleVeiculoSelect = (_: any, veiculoSelecionado: VeiculoAutocompleteResponseDTO | null) => {
+        setSelectedVeiculo(veiculoSelecionado);
+        if (!veiculoSelecionado) {
             onChange(null);
             return;
         }
-        const veiculo: VeiculoAutoCompleteDTO = {
-            id: veiculoComCliente.id,
-            placa: veiculoComCliente.placa,
-            modelo: {
-                id: '',
-                nome: veiculoComCliente.modelo,
-                marca: { id: '', nome: veiculoComCliente.marca },
-                tipo: { id: veiculoComCliente.idTipo, descricao: veiculoComCliente.tipo },
-            },
-            cor: { id: '', nome: veiculoComCliente.cor },
-            observacao: veiculoComCliente.observacao,
-            semPlaca: veiculoComCliente.placa !== '',
-            clienteId: veiculoComCliente.clienteId,
-            clienteNome: veiculoComCliente.clienteNome,
-            clienteObservacao: veiculoComCliente.clienteObservacao,
-            clienteTelefone: veiculoComCliente.clienteTelefone,
-        };
-        onChange(veiculo);
+        const veiculo = mapToVeiculoDTO(veiculoSelecionado);
+        onChange(veiculo, {
+            id: veiculoSelecionado.idCliente,
+            nome: '',
+        });
     };
 
     return (
         <>
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-                <Autocomplete
-                    fullWidth
-                    size="small"
-                    disabled={disabled}
-                    options={veiculos}
-                    getOptionLabel={(option) =>
-                        option ? `${option.clienteNome} / ${option.marca} ${option.modelo} ${option.cor} • ${option.placa}` : ''
-                    }
-                    filterOptions={(options) => options}
-                    isOptionEqualToValue={(option, value) => option.id === value.id}
-                    loading={loadingVeiculos}
-                    value={selectedVeiculoComCliente}
-                    onChange={handleVeiculoSelect}
-                    onInputChange={(_, newValue, reason) => {
-                        if (reason === 'input') handleSearchVeiculos(newValue);
-                    }}
-                    onOpen={() => handleSearchVeiculos('')}
-                    noOptionsText="Nenhum veículo encontrado"
-                    loadingText="Carregando..."
-                    renderOption={(props, option) => (
-                        <Box component="li" {...props} key={option.id}>
-                            <Box>
-                                <Typography variant="body2" fontWeight={500}>
-                                    {option.marca} {option.modelo} {option.cor} • {option.placa}
-                                </Typography>
-                                <Typography variant="caption">
-                                    {option.clienteNome} • {option.clienteTelefone}
-                                </Typography>
-                            </Box>
+            <Autocomplete
+                fullWidth
+                size="small"
+                disabled={disabled}
+                options={veiculos}
+                getOptionLabel={(option) =>
+                    option ? `${option.marca} ${option.modelo} ${option.cor} • ${option.placa || 'Sem placa'}` : ''
+                }
+                filterOptions={(options) => options}
+                isOptionEqualToValue={(option, val) => option.id === val.id}
+                loading={loadingVeiculos}
+                value={selectedVeiculo}
+                onChange={handleVeiculoSelect}
+                onInputChange={(_, newValue, reason) => {
+                    if (reason === 'input') handleSearchVeiculos(newValue);
+                }}
+                onOpen={() => searchVeiculos('', clienteId)}
+                noOptionsText={clienteId ? "Nenhum veículo encontrado para este cliente" : "Nenhum veículo encontrado"}
+                loadingText="Carregando..."
+                renderOption={(props, option) => (
+                    <Box component="li" {...props} key={option.id}>
+                        <Box>
+                            <Typography variant="body2" fontWeight={500}>
+                                {option.marca} {option.modelo} {option.cor} • {option.placa || 'Sem placa'}
+                            </Typography>
                         </Box>
-                    )}
-                    renderInput={(params) => (
-                        <TextField
-                            {...params}
-                            label='Cliente/Veículo'
-                            required={required}
-                            error={!!error}
-                            helperText={error}
-                        />
-                    )}
-                />
-                {showAddButton && !disabled && !selectedVeiculoComCliente && (
-                    <Tooltip title="Cadastrar cliente" arrow>
-                        <IconButton
-                            size="small"
-                            onClick={handleAddCliente}
-                            sx={{
-                                height: 40,
-                                width: 40,
-                                flexShrink: 0,
-                                borderRadius: 1.5,
-                                bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
-                                color: 'primary.main',
-                                border: 1,
-                                borderColor: (theme) => alpha(theme.palette.primary.main, 0.3),
-                                transition: 'all 0.2s ease',
-                                '&:hover': {
-                                    bgcolor: 'primary.main',
-                                    color: 'white',
-                                    borderColor: 'primary.main',
-                                    transform: 'scale(1.05)',
-                                },
-                            }}
-                        >
-                            <AddIcon fontSize="small" />
-                        </IconButton>
-                    </Tooltip>
+                    </Box>
                 )}
-            </Box>
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        label='Veículo'
+                        required={required}
+                        error={!!error}
+                        helperText={error}
+                    />
+                )}
+            />
 
-            {selectedVeiculoComCliente?.clienteObservacao && (
-                <Box
-                    sx={{
-                        mt: 1,
-                        p: 1.5,
-                        bgcolor: alpha('#1976d2', 0.04),
-                        borderRadius: 1,
-                        border: 1,
-                        borderColor: alpha('#1976d2', 0.1),
-                    }}
-                >
-                    <Typography variant="caption" color="text.secondary">
-                        <strong>Observação do Cliente:</strong> {selectedVeiculoComCliente.clienteObservacao}
-                    </Typography>
-                </Box>
-            )}
-
-            {selectedVeiculoComCliente?.observacao && (
+            {selectedVeiculo?.observacao && (
                 <Box
                     sx={{
                         mt: 1,
@@ -255,7 +236,7 @@ export default function VeiculoAutocomplete({
                     }}
                 >
                     <Typography variant="caption" color="text.secondary">
-                        <strong>Observação do Veículo:</strong> {selectedVeiculoComCliente.observacao}
+                        <strong>Observação do Veículo:</strong> {selectedVeiculo.observacao}
                     </Typography>
                 </Box>
             )}
