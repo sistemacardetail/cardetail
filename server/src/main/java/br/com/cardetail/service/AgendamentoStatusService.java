@@ -12,18 +12,15 @@ public class AgendamentoStatusService {
 
     private final AgendamentoStatusRepository statusRepository;
 
-    @Transactional
-    public int updateIfExistsConfirmedToInProgress() {
-        return statusRepository.updateIfExistsConfirmedToInProgress();
+    @Transactional(readOnly = true)
+    public boolean hasAgendamentosPendentesDeAtualizacao() {
+        return statusRepository.hasAgendamentosPendentesDeAtualizacao();
     }
 
     @Transactional
-    public int updateIfExistsInProgressToCompleted() {
-        return statusRepository.updateIfExistsInProgressToCompleted();
-    }
-
-    @Transactional
-    public int updateIfExistsConfirmedToCompleted() {
-        return statusRepository.updateIfExistsConfirmedToCompleted();
+    public void updateAllStatus() {
+        statusRepository.updateConfirmedToCompleted();
+        statusRepository.updateConfirmedToInProgress();
+        statusRepository.updateInProgressToCompleted();
     }
 }
