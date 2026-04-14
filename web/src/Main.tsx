@@ -56,6 +56,8 @@ const SistemaForm = React.lazy(() => import('./configuracoes/sistema/SistemaForm
 const ServicoTerceirizadoList = React.lazy(() => import('./servicos-terceirizados/ServicoTerceirizadoList'));
 const ServicoTerceirizadoCreate = React.lazy(() => import('./servicos-terceirizados/ServicoTerceirizadoCreate'));
 const ServicoTerceirizadoEdit = React.lazy(() => import('./servicos-terceirizados/ServicoTerceirizadoEdit'));
+const ConsultaFaturamento = React.lazy(() => import('./consultas/ConsultaFaturamento'));
+const ConsultaClientes = React.lazy(() => import('./consultas/ConsultaClientes'));
 
 const RouteLoading: React.FC = () => (
     <div style={{
@@ -235,6 +237,11 @@ const AppRoutes: React.FC = () => {
                                     <Route path="servicos-terceirizados" element={<PermissionPageGuard permissao={PERMISSOES.SERVICOS_TERCEIRIZADOS_VISUALIZAR}><ServicoTerceirizadoList /></PermissionPageGuard>} />
                                     <Route path="servicos-terceirizados/novo" element={<PermissionPageGuard permissao={PERMISSOES.SERVICOS_TERCEIRIZADOS_CRIAR}><ServicoTerceirizadoCreate /></PermissionPageGuard>} />
                                     <Route path="servicos-terceirizados/:id" element={<PermissionPageGuard permissao={PERMISSOES.SERVICOS_TERCEIRIZADOS_EDITAR}><ServicoTerceirizadoEdit /></PermissionPageGuard>} />
+
+                                    {/* Consultas */}
+                                    <Route path="consultas/clientes" element={<PermissionPageGuard permissao={PERMISSOES.CLIENTES_VISUALIZAR}><ConsultaClientes /></PermissionPageGuard>} />
+                                    <Route path="consultas/faturamento" element={<PermissionPageGuard permissao={PERMISSOES.AGENDAMENTOS_PAGAMENTOS_VISUALIZAR}><ConsultaFaturamento /></PermissionPageGuard>} />
+                                    <Route path="consultas/agendamentos" element={<PermissionPageGuard permissao={PERMISSOES.AGENDAMENTOS_PAGAMENTOS_VISUALIZAR}><ConsultaFaturamento /></PermissionPageGuard>} />
                                 </Route>
                                 <Route path="*" element={<Navigate to="/" replace />} />
                             </Routes>
